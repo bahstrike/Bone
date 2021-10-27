@@ -1,8 +1,8 @@
 # Bone
 directplay lobby project for jedi knight dark forces 2
 
-## usage
-just download and run Bone.exe **as administrator** _(this is required for DirectPlay to launch JK)_
+~~## usage
+just download and run Bone.exe **as administrator** _(this is required for DirectPlay to launch JK)_~~
 
 ### planned features
 - directly host or join JK games via IP address
