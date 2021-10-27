@@ -41,6 +41,7 @@
             this.UNregisterDplayApp = new System.Windows.Forms.Button();
             this.sessionDetailsLabel = new System.Windows.Forms.Label();
             this.remotePassword = new System.Windows.Forms.TextBox();
+            this.enableDPlayButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // hostButton
@@ -150,11 +151,22 @@
             this.remotePassword.Size = new System.Drawing.Size(100, 20);
             this.remotePassword.TabIndex = 10;
             // 
+            // enableDPlayButton
+            // 
+            this.enableDPlayButton.Location = new System.Drawing.Point(558, 213);
+            this.enableDPlayButton.Name = "enableDPlayButton";
+            this.enableDPlayButton.Size = new System.Drawing.Size(118, 23);
+            this.enableDPlayButton.TabIndex = 11;
+            this.enableDPlayButton.Text = "enable directplay";
+            this.enableDPlayButton.UseVisualStyleBackColor = true;
+            this.enableDPlayButton.Click += new System.EventHandler(this.enableDPlayButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 458);
+            this.Controls.Add(this.enableDPlayButton);
             this.Controls.Add(this.remotePassword);
             this.Controls.Add(this.sessionDetailsLabel);
             this.Controls.Add(this.UNregisterDplayApp);
@@ -188,6 +200,7 @@
         private System.Windows.Forms.Button UNregisterDplayApp;
         private System.Windows.Forms.Label sessionDetailsLabel;
         private System.Windows.Forms.TextBox remotePassword;
+        private System.Windows.Forms.Button enableDPlayButton;
     }
 }
 

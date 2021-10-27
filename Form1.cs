@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 using Microsoft.Win32;
 
 namespace Bone
@@ -125,6 +126,12 @@ namespace Bone
 
             }
 
+        }
+
+        private void enableDPlayButton_Click(object sender, EventArgs e)
+        {
+            Process.Start("dism.exe", "/Online /enable-feature /FeatureName:\"LegacyComponents\" /NoRestart").WaitForExit();
+            Process.Start("dism.exe", "/Online /enable-feature /FeatureName:\"DirectPlay\" /NoRestart").WaitForExit();
         }
     }
 }
