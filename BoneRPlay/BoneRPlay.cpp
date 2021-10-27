@@ -50,249 +50,249 @@ GUID GimmeInstanceGUID()
 }
 
 
-
-BOOL FAR PASCAL DPlayEnumSessions(LPCDPSESSIONDESC2 pSrc, LPDWORD lpdwTimeOut, DWORD dwFlags, LPVOID lpContext)
-{
-	if (dwFlags & DPESC_TIMEDOUT)
-		return FALSE;
-
-	DPSESSIONDESC2* &pSession = *(DPSESSIONDESC2**)lpContext;
-	pSession = new DPSESSIONDESC2;
-	memcpy(pSession, pSrc, sizeof(DPSESSIONDESC2));
-
-	if (pSrc->lpszSessionName != nullptr)
-	{
-		pSession->lpszSessionName = new wchar_t[256];
-		wcscpy(pSession->lpszSessionName, pSrc->lpszSessionName);
-	}
-
-	if (pSrc->lpszPassword != nullptr)
-	{
-		pSession->lpszPassword = new wchar_t[256];
-		wcscpy(pSession->lpszPassword, pSrc->lpszPassword);
-	}
-
-	return FALSE;// stop enumerating if we found one.. only support 1 session for query right now
-}
-
-
-
-
-void __stdcall QuerySession(const char* szAddress)
-{
-	HRESULT hr;
-	const char* szResult;
-	IDirectPlay3A* pDirectPlay = nullptr;
-
-	CoCreateInstance(CLSID_DirectPlay, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlay3A, (LPVOID*)&pDirectPlay);
-
-
-
-
-	IDirectPlayLobby2* pLobby = nullptr;
-	CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2, (LPVOID*)&pLobby);
-
-	char* addressConnection = nullptr;
-	DWORD addressConnectionLen = 0;
-	pLobby->CreateAddress(DPSPGUID_TCPIP, DPAID_INet, szAddress, strlen(szAddress) + 1, addressConnection, &addressConnectionLen);//query size
-
-	addressConnection = new char[addressConnectionLen];
-	pLobby->CreateAddress(DPSPGUID_TCPIP, DPAID_INet, szAddress, strlen(szAddress) + 1, addressConnection, &addressConnectionLen);
-
-
-	pLobby->Release();
-	pLobby = nullptr;
-
-
-	hr = pDirectPlay->InitializeConnection(addressConnection, 0);
-	delete[] addressConnection;
-	
-	szResult = FormatDPLAYRESULT(hr);
-
-
-
-	DPSESSIONDESC2 *pResultDesc = nullptr;
-
-
-
-	DPSESSIONDESC2 sessionDesc;
-	ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
-	sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
-	sessionDesc.guidApplication = GimmeJKGUID();
-	hr = pDirectPlay->EnumSessions(&sessionDesc, 0, DPlayEnumSessions, &pResultDesc, DPENUMSESSIONS_AVAILABLE);
-
-	szResult = FormatDPLAYRESULT(hr);
-
-	pDirectPlay->Release();
-
-
-
-	if (pResultDesc != nullptr)
-	{
-		if (pResultDesc->lpszSessionName != nullptr)
-			delete[] pResultDesc->lpszSessionName;
-
-		if (pResultDesc->lpszPassword != nullptr)
-			delete[] pResultDesc->lpszPassword;
-
-		delete pResultDesc;
-		pResultDesc = nullptr;
-	}
-}
-
-
-static char s_szBlank[1] = { 0 };
-
-IDirectPlayLobby2A* g_pLobby = nullptr;
-DWORD g_uAppID = 0;
-
-void Shutdown()
-{
-	if (g_pLobby != nullptr)
-	{
-		g_pLobby->Release();
-		g_pLobby = nullptr;
-	}
-
-	g_uAppID = 0;
-}
-
-bool Host()
-{
-	Shutdown();
-
-	HRESULT hr;
-
-	hr = CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2A, (LPVOID*)&g_pLobby);
-
-	DPSESSIONDESC2 sessionDesc;
-	ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
-	sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
-	sessionDesc.guidApplication = GimmeJKGUID();
-	sessionDesc.guidInstance = GimmeInstanceGUID();
-
-	DPNAME playerName;
-	ZeroMemory(&playerName, sizeof(DPNAME));
-	playerName.dwSize = sizeof(DPNAME);
-	playerName.lpszShortNameA = s_szBlank;
-
-	DPLCONNECTION connectInfo;
-	ZeroMemory(&connectInfo, sizeof(DPLCONNECTION));
-	connectInfo.dwSize = sizeof(DPLCONNECTION);
-	connectInfo.dwFlags = DPLCONNECTION_CREATESESSION;
-	connectInfo.guidSP = DPSPGUID_TCPIP;
-	connectInfo.lpPlayerName = &playerName;
-	connectInfo.lpSessionDesc = &sessionDesc;
-
-	hr = g_pLobby->RunApplication(0, &g_uAppID, &connectInfo, NULL);
-
-	//DPERR_UNKNOWNAPPLICATION    means missing registry entries, OR maybe need the dism.exe hax at top of file
-	//DPERR_CANTCREATEPROCESS     means we weren't run as administrator
-
-	if(hr != DP_OK)
-	{
-		g_pLobby->Release();
-		g_pLobby = nullptr;
-		return false;
-	}
-
-	return true;
-}
-
-bool Join(GUID instanceGuid, const char* szAddress)
-{
-	Shutdown();
-
-	HRESULT hr;
-
-	hr = CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2A, (LPVOID*)&g_pLobby);
-	if (FAILED(hr))
-		return false;
-
-	char* addressConnection = nullptr;
-	DWORD addressConnectionLen = 0;
-	g_pLobby->CreateAddress(DPSPGUID_TCPIP, DPAID_INet, szAddress, strlen(szAddress) + 1, addressConnection, &addressConnectionLen);//query size
-
-	addressConnection = new char[addressConnectionLen];
-	g_pLobby->CreateAddress(DPSPGUID_TCPIP, DPAID_INet, szAddress, strlen(szAddress) + 1, addressConnection, &addressConnectionLen);
-
-
-	DPSESSIONDESC2 sessionDesc;
-	ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
-	sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
-	sessionDesc.guidApplication = GimmeJKGUID();
-	sessionDesc.guidInstance = instanceGuid;
-	sessionDesc.lpszSessionNameA = s_szBlank;
-	sessionDesc.lpszPasswordA = s_szBlank;
-
-	DPNAME playerName;
-	ZeroMemory(&playerName, sizeof(DPNAME));
-	playerName.dwSize = sizeof(DPNAME);
-	playerName.lpszShortNameA = s_szBlank;
-
-	DPLCONNECTION connectInfo;
-	ZeroMemory(&connectInfo, sizeof(DPLCONNECTION));
-	connectInfo.dwSize = sizeof(DPLCONNECTION);
-	connectInfo.lpSessionDesc = &sessionDesc;
-	connectInfo.lpPlayerName = &playerName;
-	connectInfo.guidSP = DPSPGUID_TCPIP;
-	connectInfo.lpAddress = addressConnection;
-	connectInfo.dwAddressSize = addressConnectionLen;
-	connectInfo.dwFlags = DPLCONNECTION_JOINSESSION;
-
-	hr = g_pLobby->RunApplication(0, &g_uAppID, &connectInfo, NULL);
-	delete[] addressConnection;
-
-	//DPERR_UNKNOWNAPPLICATION    means missing registry entries, OR maybe need the dism.exe hax at top of file
-	//DPERR_CANTCREATEPROCESS     means we weren't run as administrator
-	
-	if(hr != DP_OK)
-	{
-		g_pLobby->Release();
-		g_pLobby = nullptr;
-		return false;
-	}
-
-	return true;
-}
-
-bool HasGameExited()
-{
-	if (g_pLobby == nullptr)
-		return true;
-
-	DWORD messageFlags = DPLMSG_SYSTEM;
-	int message[1024];
-	DWORD messageSize = sizeof(message);
-
-	HRESULT hr = g_pLobby->ReceiveLobbyMessage(0, g_uAppID, &messageFlags, &message, &messageSize);
-
-	// if no messages, game still running
-	if (hr == DPERR_NOMESSAGES)
-		return false;
-
-	// if error, game is not running
-	if (hr != DP_OK)
-		return true;
-
-
-	// ignore if not system message
-	if ((messageFlags & DPLMSG_SYSTEM) == 0)
-		return false;
-
-	int code = *(int*)message;//dwType,guidInstance
-
-	// if exit code, we're done
-	if (code == 4)
-		return true;
-
-
-	// ignore anything else
-	return false;
-}
-
 extern "C"
 {
+	BOOL FAR PASCAL DPlayEnumSessions(LPCDPSESSIONDESC2 pSrc, LPDWORD lpdwTimeOut, DWORD dwFlags, LPVOID lpContext)
+	{
+		if (dwFlags & DPESC_TIMEDOUT)
+			return FALSE;
+
+		DPSESSIONDESC2* &pSession = *(DPSESSIONDESC2**)lpContext;
+		pSession = new DPSESSIONDESC2;
+		memcpy(pSession, pSrc, sizeof(DPSESSIONDESC2));
+
+		if (pSrc->lpszSessionName != nullptr)
+		{
+			pSession->lpszSessionName = new wchar_t[256];
+			wcscpy(pSession->lpszSessionName, pSrc->lpszSessionName);
+		}
+
+		if (pSrc->lpszPassword != nullptr)
+		{
+			pSession->lpszPassword = new wchar_t[256];
+			wcscpy(pSession->lpszPassword, pSrc->lpszPassword);
+		}
+
+		return FALSE;// stop enumerating if we found one.. only support 1 session for query right now
+	}
+
+
+
+
+	void __stdcall QuerySession(const char* szAddress)
+	{
+		HRESULT hr;
+		const char* szResult;
+		IDirectPlay3A* pDirectPlay = nullptr;
+
+		CoCreateInstance(CLSID_DirectPlay, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlay3A, (LPVOID*)&pDirectPlay);
+
+
+
+
+		IDirectPlayLobby2* pLobby = nullptr;
+		CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2, (LPVOID*)&pLobby);
+
+		char* addressConnection = nullptr;
+		DWORD addressConnectionLen = 0;
+		pLobby->CreateAddress(DPSPGUID_TCPIP, DPAID_INet, szAddress, strlen(szAddress) + 1, addressConnection, &addressConnectionLen);//query size
+
+		addressConnection = new char[addressConnectionLen];
+		pLobby->CreateAddress(DPSPGUID_TCPIP, DPAID_INet, szAddress, strlen(szAddress) + 1, addressConnection, &addressConnectionLen);
+
+
+		pLobby->Release();
+		pLobby = nullptr;
+
+
+		hr = pDirectPlay->InitializeConnection(addressConnection, 0);
+		delete[] addressConnection;
+
+		szResult = FormatDPLAYRESULT(hr);
+
+
+
+		DPSESSIONDESC2 *pResultDesc = nullptr;
+
+
+
+		DPSESSIONDESC2 sessionDesc;
+		ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
+		sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
+		sessionDesc.guidApplication = GimmeJKGUID();
+		hr = pDirectPlay->EnumSessions(&sessionDesc, 0, DPlayEnumSessions, &pResultDesc, DPENUMSESSIONS_AVAILABLE);
+
+		szResult = FormatDPLAYRESULT(hr);
+
+		pDirectPlay->Release();
+
+
+
+		if (pResultDesc != nullptr)
+		{
+			if (pResultDesc->lpszSessionName != nullptr)
+				delete[] pResultDesc->lpszSessionName;
+
+			if (pResultDesc->lpszPassword != nullptr)
+				delete[] pResultDesc->lpszPassword;
+
+			delete pResultDesc;
+			pResultDesc = nullptr;
+		}
+	}
+
+
+	static char s_szBlank[1] = { 0 };
+
+	IDirectPlayLobby2A* g_pLobby = nullptr;
+	DWORD g_uAppID = 0;
+
+	void __stdcall Shutdown()
+	{
+		if (g_pLobby != nullptr)
+		{
+			g_pLobby->Release();
+			g_pLobby = nullptr;
+		}
+
+		g_uAppID = 0;
+	}
+
+	bool __stdcall Host()
+	{
+		Shutdown();
+
+		HRESULT hr;
+
+		hr = CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2A, (LPVOID*)&g_pLobby);
+
+		DPSESSIONDESC2 sessionDesc;
+		ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
+		sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
+		sessionDesc.guidApplication = GimmeJKGUID();
+		sessionDesc.guidInstance = GimmeInstanceGUID();
+
+		DPNAME playerName;
+		ZeroMemory(&playerName, sizeof(DPNAME));
+		playerName.dwSize = sizeof(DPNAME);
+		playerName.lpszShortNameA = s_szBlank;
+
+		DPLCONNECTION connectInfo;
+		ZeroMemory(&connectInfo, sizeof(DPLCONNECTION));
+		connectInfo.dwSize = sizeof(DPLCONNECTION);
+		connectInfo.dwFlags = DPLCONNECTION_CREATESESSION;
+		connectInfo.guidSP = DPSPGUID_TCPIP;
+		connectInfo.lpPlayerName = &playerName;
+		connectInfo.lpSessionDesc = &sessionDesc;
+
+		hr = g_pLobby->RunApplication(0, &g_uAppID, &connectInfo, NULL);
+
+		//DPERR_UNKNOWNAPPLICATION    means missing registry entries, OR maybe need the dism.exe hax at top of file
+		//DPERR_CANTCREATEPROCESS     means we weren't run as administrator
+
+		if (hr != DP_OK)
+		{
+			g_pLobby->Release();
+			g_pLobby = nullptr;
+			return false;
+		}
+
+		return true;
+	}
+
+	bool __stdcall Join(GUID instanceGuid, const char* szAddress)
+	{
+		Shutdown();
+
+		HRESULT hr;
+
+		hr = CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2A, (LPVOID*)&g_pLobby);
+		if (FAILED(hr))
+			return false;
+
+		char* addressConnection = nullptr;
+		DWORD addressConnectionLen = 0;
+		g_pLobby->CreateAddress(DPSPGUID_TCPIP, DPAID_INet, szAddress, strlen(szAddress) + 1, addressConnection, &addressConnectionLen);//query size
+
+		addressConnection = new char[addressConnectionLen];
+		g_pLobby->CreateAddress(DPSPGUID_TCPIP, DPAID_INet, szAddress, strlen(szAddress) + 1, addressConnection, &addressConnectionLen);
+
+
+		DPSESSIONDESC2 sessionDesc;
+		ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
+		sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
+		sessionDesc.guidApplication = GimmeJKGUID();
+		sessionDesc.guidInstance = instanceGuid;
+		sessionDesc.lpszSessionNameA = s_szBlank;
+		sessionDesc.lpszPasswordA = s_szBlank;
+
+		DPNAME playerName;
+		ZeroMemory(&playerName, sizeof(DPNAME));
+		playerName.dwSize = sizeof(DPNAME);
+		playerName.lpszShortNameA = s_szBlank;
+
+		DPLCONNECTION connectInfo;
+		ZeroMemory(&connectInfo, sizeof(DPLCONNECTION));
+		connectInfo.dwSize = sizeof(DPLCONNECTION);
+		connectInfo.lpSessionDesc = &sessionDesc;
+		connectInfo.lpPlayerName = &playerName;
+		connectInfo.guidSP = DPSPGUID_TCPIP;
+		connectInfo.lpAddress = addressConnection;
+		connectInfo.dwAddressSize = addressConnectionLen;
+		connectInfo.dwFlags = DPLCONNECTION_JOINSESSION;
+
+		hr = g_pLobby->RunApplication(0, &g_uAppID, &connectInfo, NULL);
+		delete[] addressConnection;
+
+		//DPERR_UNKNOWNAPPLICATION    means missing registry entries, OR maybe need the dism.exe hax at top of file
+		//DPERR_CANTCREATEPROCESS     means we weren't run as administrator
+
+		if (hr != DP_OK)
+		{
+			g_pLobby->Release();
+			g_pLobby = nullptr;
+			return false;
+		}
+
+		return true;
+	}
+
+	bool __stdcall HasGameExited()
+	{
+		if (g_pLobby == nullptr)
+			return true;
+
+		DWORD messageFlags = DPLMSG_SYSTEM;
+		int message[1024];
+		DWORD messageSize = sizeof(message);
+
+		HRESULT hr = g_pLobby->ReceiveLobbyMessage(0, g_uAppID, &messageFlags, &message, &messageSize);
+
+		// if no messages, game still running
+		if (hr == DPERR_NOMESSAGES)
+			return false;
+
+		// if error, game is not running
+		if (hr != DP_OK)
+			return true;
+
+
+		// ignore if not system message
+		if ((messageFlags & DPLMSG_SYSTEM) == 0)
+			return false;
+
+		int code = *(int*)message;//dwType,guidInstance
+
+		// if exit code, we're done
+		if (code == 4)
+			return true;
+
+
+		// ignore anything else
+		return false;
+	}
+
+
 
 
 	void __stdcall test()

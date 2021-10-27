@@ -1,3 +1,8 @@
 LIBRARY "BoneRPlay"
 EXPORTS
+	QuerySession
+	Shutdown
+	Host
+	Join
+	HasGameExited
 	test
