@@ -36,20 +36,6 @@ GUID GimmeJKGUID()
 }
 
 
-// the instance GUID does have to match;  so lets just hardcode one for now
-GUID GimmeInstanceGUID()
-{
-	static unsigned int _iguid[] = {
-		0x0BF0613C0,
-		0x05555DE79,
-		0x0A000C129,
-		0x02BAD7624
-	};
-
-	return *(GUID*)_iguid;
-}
-
-
 BOOL FAR PASCAL DPlayEnumSessions(LPCDPSESSIONDESC2 pSrc, LPDWORD lpdwTimeOut, DWORD dwFlags, LPVOID lpContext)
 {
 	if (dwFlags & DPESC_TIMEDOUT)
@@ -65,26 +51,19 @@ BOOL FAR PASCAL DPlayEnumSessions(LPCDPSESSIONDESC2 pSrc, LPDWORD lpdwTimeOut, D
 		wcscpy(pSession->lpszSessionName, pSrc->lpszSessionName);
 	}
 
-	if (pSrc->lpszPassword != nullptr)
-	{
-		pSession->lpszPassword = new wchar_t[256];
-		wcscpy(pSession->lpszPassword, pSrc->lpszPassword);
-	}
-
 	return FALSE;// stop enumerating if we found one.. only support 1 session for query right now
 }
 
 
 extern "C"
 {
-
-	void __stdcall QuerySession(const char* szAddress)
+	BOOL __stdcall QuerySession(const char* szAddress, const char* szPassword, GUID* pGuidInstance, int* pnMaxPlayers, int* pnCurPlayers, wchar_t* wcSessionName, DWORD* puUser1, DWORD* puUser2, DWORD* puUser3, DWORD* puUser4)
 	{
 		HRESULT hr;
 		const char* szResult;
-		IDirectPlay3A* pDirectPlay = nullptr;
+		IDirectPlay3* pDirectPlay = nullptr;
 
-		CoCreateInstance(CLSID_DirectPlay, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlay3A, (LPVOID*)&pDirectPlay);
+		CoCreateInstance(CLSID_DirectPlay, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlay3, (LPVOID*)&pDirectPlay);
 
 
 
@@ -119,6 +98,15 @@ extern "C"
 		ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
 		sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
 		sessionDesc.guidApplication = GimmeJKGUID();
+		wchar_t password[128];
+		if (szPassword != nullptr && szPassword[0] != 0)
+		{
+			int slen = strlen(szPassword);
+			mbstowcs(password, szPassword, slen);
+			password[slen] = 0;
+
+			sessionDesc.lpszPassword = password;
+		}
 		hr = pDirectPlay->EnumSessions(&sessionDesc, 0, DPlayEnumSessions, &pResultDesc, DPENUMSESSIONS_AVAILABLE);
 
 		szResult = FormatDPLAYRESULT(hr);
@@ -126,18 +114,31 @@ extern "C"
 		pDirectPlay->Release();
 
 
+		if (pResultDesc == nullptr)
+			return FALSE;
 
-		if (pResultDesc != nullptr)
-		{
-			if (pResultDesc->lpszSessionName != nullptr)
-				delete[] pResultDesc->lpszSessionName;
 
-			if (pResultDesc->lpszPassword != nullptr)
-				delete[] pResultDesc->lpszPassword;
+		*pGuidInstance = pResultDesc->guidInstance;
+		*pnMaxPlayers = pResultDesc->dwMaxPlayers;
+		*pnCurPlayers = pResultDesc->dwCurrentPlayers;
+		if (pResultDesc->lpszSessionName == nullptr)
+			wcscpy(wcSessionName, L"");
+		else
+			wcscpy(wcSessionName, pResultDesc->lpszSessionName);
+		*puUser1 = pResultDesc->dwUser1;
+		*puUser2 = pResultDesc->dwUser2;
+		*puUser3 = pResultDesc->dwUser3;
+		*puUser4 = pResultDesc->dwUser4;
 
-			delete pResultDesc;
-			pResultDesc = nullptr;
-		}
+
+
+		if (pResultDesc->lpszSessionName != nullptr)
+			delete[] pResultDesc->lpszSessionName;
+
+		delete pResultDesc;
+		pResultDesc = nullptr;
+
+		return TRUE;
 	}
 
 
@@ -169,7 +170,7 @@ extern "C"
 		ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
 		sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
 		sessionDesc.guidApplication = GimmeJKGUID();
-		sessionDesc.guidInstance = GimmeInstanceGUID();
+		CoCreateGuid(&sessionDesc.guidInstance);
 
 		DPNAME playerName;
 		ZeroMemory(&playerName, sizeof(DPNAME));
@@ -199,7 +200,7 @@ extern "C"
 		return TRUE;
 	}
 
-	BOOL __stdcall Join(const GUID* pInstanceGUID, const char* szAddress)
+	BOOL __stdcall Join(const GUID* pInstanceGUID, const char* szAddress, const char* szPassword)
 	{
 		Shutdown();
 
@@ -221,9 +222,17 @@ extern "C"
 		ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
 		sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
 		sessionDesc.guidApplication = GimmeJKGUID();
-		sessionDesc.guidInstance = (pInstanceGUID==nullptr) ? GimmeInstanceGUID() : (*pInstanceGUID);
+		sessionDesc.guidInstance = *pInstanceGUID;
 		sessionDesc.lpszSessionNameA = s_szBlank;
-		sessionDesc.lpszPasswordA = s_szBlank;
+		wchar_t password[128];
+		if (szPassword != nullptr && szPassword[0] != 0)
+		{
+			int slen = strlen(szPassword);
+			mbstowcs(password, szPassword, slen);
+			password[slen] = 0;
+
+			sessionDesc.lpszPassword = password;
+		}
 
 		DPNAME playerName;
 		ZeroMemory(&playerName, sizeof(DPNAME));
@@ -299,8 +308,12 @@ extern "C"
 		MessageBox(0, "blahlalh", 0, 0);
 
 
-#if 0
-		QuerySession("192.168.5.3");
+#if 1
+		GUID guidInstance;
+		int maxPlayers, curPlayers;
+		wchar_t sessionName[512];
+		DWORD user1, user2, user3, user4;
+		QuerySession("192.168.5.3", nullptr, &guidInstance, &maxPlayers, &curPlayers, sessionName, &user1, &user2, &user3, &user4);
 #elif 0
 		Host();
 #else
@@ -332,6 +345,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 		break;
 
 	case DLL_PROCESS_DETACH:
+		Shutdown();
+
 		CoUninitialize();
 		break;
 	}

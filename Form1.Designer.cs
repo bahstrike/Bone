@@ -39,6 +39,8 @@
             this.registerDplayApp = new System.Windows.Forms.Button();
             this.dplayRegisteredLabel = new System.Windows.Forms.Label();
             this.UNregisterDplayApp = new System.Windows.Forms.Button();
+            this.sessionDetailsLabel = new System.Windows.Forms.Label();
+            this.remotePassword = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // hostButton
@@ -77,6 +79,7 @@
             this.remoteAddress.Name = "remoteAddress";
             this.remoteAddress.Size = new System.Drawing.Size(100, 20);
             this.remoteAddress.TabIndex = 3;
+            this.remoteAddress.Text = "192.168.5.3";
             // 
             // shutdownButton
             // 
@@ -131,11 +134,29 @@
             this.UNregisterDplayApp.UseVisualStyleBackColor = true;
             this.UNregisterDplayApp.Click += new System.EventHandler(this.UNregisterDplayApp_Click);
             // 
+            // sessionDetailsLabel
+            // 
+            this.sessionDetailsLabel.AutoSize = true;
+            this.sessionDetailsLabel.Location = new System.Drawing.Point(363, 157);
+            this.sessionDetailsLabel.Name = "sessionDetailsLabel";
+            this.sessionDetailsLabel.Size = new System.Drawing.Size(27, 13);
+            this.sessionDetailsLabel.TabIndex = 9;
+            this.sessionDetailsLabel.Text = "blah";
+            // 
+            // remotePassword
+            // 
+            this.remotePassword.Location = new System.Drawing.Point(328, 131);
+            this.remotePassword.Name = "remotePassword";
+            this.remotePassword.Size = new System.Drawing.Size(100, 20);
+            this.remotePassword.TabIndex = 10;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 458);
+            this.Controls.Add(this.remotePassword);
+            this.Controls.Add(this.sessionDetailsLabel);
             this.Controls.Add(this.UNregisterDplayApp);
             this.Controls.Add(this.dplayRegisteredLabel);
             this.Controls.Add(this.registerDplayApp);
@@ -165,6 +186,8 @@
         private System.Windows.Forms.Button registerDplayApp;
         private System.Windows.Forms.Label dplayRegisteredLabel;
         private System.Windows.Forms.Button UNregisterDplayApp;
+        private System.Windows.Forms.Label sessionDetailsLabel;
+        private System.Windows.Forms.TextBox remotePassword;
     }
 }
 

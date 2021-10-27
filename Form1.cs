@@ -30,20 +30,32 @@ namespace Bone
 
         private void queryButton_Click(object sender, EventArgs e)
         {
-            BoneRPlay.QuerySession(remoteAddress.Text);
+            BoneRPlay.SessionInfo info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
 
-
+            if (info == null)
+                sessionDetailsLabel.Text = "NO SESSION";
+            else
+                sessionDetailsLabel.Text =
+                    $"instance: {info.guidInstance}\n" +
+                    $"session: {info.sessionName}\n" +
+                    $"players: {info.curPlayers}/{info.maxPlayers}\n" +
+                    $"user1: {info.user1}\n" +
+                    $"user2: {info.user2}\n" +
+                    $"user3: {info.user3}\n" +
+                    $"user4: {info.user4}";
         }
 
         private void joinButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("doesnt work yet");
+            BoneRPlay.SessionInfo info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
+            if(info == null)
+            {
+                MessageBox.Show("Couldn't find session");
+                return;
+            }
 
 
-            // BoneRPlay.QuerySession()  to get instance GUID
-
-
-            BoneRPlay.Join(IntPtr.Zero/*needInstanceGUID*/, remoteAddress.Text);
+            BoneRPlay.Join(ref info.guidInstance, remoteAddress.Text, remotePassword.Text);
 
 
         }
