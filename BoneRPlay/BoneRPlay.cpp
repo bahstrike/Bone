@@ -66,8 +66,6 @@ extern "C"
 		CoCreateInstance(CLSID_DirectPlay, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlay3, (LPVOID*)&pDirectPlay);
 
 
-
-
 		IDirectPlayLobby2* pLobby = nullptr;
 		CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2, (LPVOID*)&pLobby);
 
@@ -301,14 +299,12 @@ extern "C"
 	}
 
 
-
-
 	void __stdcall test()
 	{
 		MessageBox(0, "blahlalh", 0, 0);
 
 
-#if 0
+#if 1
 		GUID guidInstance;
 		int maxPlayers, curPlayers;
 		wchar_t sessionName[512];

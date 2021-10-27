@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
 
@@ -78,7 +79,7 @@ namespace Bone
             gameExitedLabel.Text = $"game exited: {BoneRPlay.HasGameExited()}";
 
 
-            dplayRegisteredLabel.Text = $"registered: {IsRegisteredAtAll}";
+            dplayRegisteredLabel.Text = $"registered: {IsJKRegistered}";
         }
 
 
@@ -93,11 +94,23 @@ namespace Bone
             }
         }
 
-        bool IsRegisteredAtAll
+        bool IsJKRegistered
         {
             get
             {
-                return (Registry.GetValue(RegistryFinalRoot, "Guid", null)!=null);
+                if (Registry.GetValue(RegistryFinalRoot, "Guid", null) == null)
+                    return false;
+
+                string path = Registry.GetValue(RegistryFinalRoot, "Path", null) as string;
+                string file = Registry.GetValue(RegistryFinalRoot, "File", null) as string;
+                if (path == null || file == null)
+                    return false;
+
+                string exepath = Path.Combine(path, file);
+                if (!File.Exists(exepath))
+                    return false;
+
+                return true;
             }
         }
 
