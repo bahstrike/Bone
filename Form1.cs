@@ -48,6 +48,12 @@ namespace Bone
 
         private void hostButton_Click(object sender, EventArgs e)
         {
+            if(!BoneRPlay.HasGameExited())
+            {
+                MessageBox.Show("A session is already active. Exit Jedi Knight first.", "Bone", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             BoneRPlay.Result result = BoneRPlay.Host();
             if (result != BoneRPlay.Result.Success)
                 ShowResultError(result);
@@ -63,12 +69,11 @@ namespace Bone
                 sessionDetailsLabel.Text =
                     //$"instance: {info.guidInstance}\n" +
                     //$"session: {info.sessionName}\n" +
-                    $"session: {info.SessionName}\n" +
-                    $"gob: {info.GOBFile}\n" +
-                    $"jkl: {info.JKLFile}\n" +
-                    $"players: {info.curPlayers}/{info.maxPlayers}\n" +
-                    $"match flags: {info.MatchFlags}\n" +
-                    $"tick rate (msec): {info.TickRateMSEC}" /*+
+                    $"Session: {info.SessionName}\n" +
+                    $"Level: {info.GOBFile} ({info.JKLFile})\n" +
+                    $"Players: {info.curPlayers}/{info.maxPlayers}\n" +
+                    $"Settings: {(info.MatchFlags == 0 ? "None" : info.MatchFlags.ToString())}\n" +
+                    $"Tick Rate (msec): {info.TickRateMSEC}" /*+
                     $"\n" +
                     $"user1: {info.user1}\n" +
                     $"user2: {info.user2}\n" +
@@ -78,6 +83,12 @@ namespace Bone
 
         private void joinButton_Click(object sender, EventArgs e)
         {
+            if (!BoneRPlay.HasGameExited())
+            {
+                MessageBox.Show("A session is already active. Exit Jedi Knight first.", "Bone", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             BoneRPlay.SessionInfo info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
             if(info == null)
             {
@@ -175,6 +186,15 @@ namespace Bone
         {
             Process.Start("dism.exe", "/Online /enable-feature /FeatureName:\"LegacyComponents\" /NoRestart").WaitForExit();
             Process.Start("dism.exe", "/Online /enable-feature /FeatureName:\"DirectPlay\" /NoRestart").WaitForExit();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+#if !DEBUG
+            devtools.Visible = false;
+#endif
+
+            sessionDetailsLabel.Text = string.Empty;
         }
     }
 }
