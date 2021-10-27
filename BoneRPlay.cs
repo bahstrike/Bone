@@ -11,6 +11,24 @@ namespace Bone
     {
         const string DLLFile = "BoneRPlay.dll";
 
+        public enum Result : int
+        {
+            Success,
+            NoDirectPlay,
+            AppNotRegistered,
+            CantCreateProcess,
+            UnknownFailure,
+        }
+
+        [Flags]
+        public enum MatchFlags
+        {
+            UseTimeLimit = 8,
+            UseScoreLimit = 16,
+            SingleLevelOnly = 128,
+            TeamPlay = 259//256
+        }
+
         public class SessionInfo
         {
             public Guid guidInstance;
@@ -21,6 +39,71 @@ namespace Bone
             public uint user2;
             public uint user3;
             public uint user4;
+
+            private void SplitSessionValues(out string name, out string gobfile, out string jklfile)
+            {
+                string[] sessionValues = sessionName.Split(':');
+                if(sessionValues.Length != 3)
+                {
+                    name = string.Empty;
+                    gobfile = string.Empty;
+                    jklfile = string.Empty;
+                    return;
+                }
+
+                name = sessionValues[0];
+                gobfile = sessionValues[1] + ".gob";
+                jklfile = sessionValues[2];
+            }
+
+            public string SessionName
+            {
+                get
+                {
+                    string name, gobfile, jklfile;
+                    SplitSessionValues(out name, out gobfile, out jklfile);
+
+                    return name;
+                }
+            }
+
+            public string GOBFile
+            {
+                get
+                {
+                    string name, gobfile, jklfile;
+                    SplitSessionValues(out name, out gobfile, out jklfile);
+
+                    return gobfile;
+                }
+            }
+
+            public string JKLFile
+            {
+                get
+                {
+                    string name, gobfile, jklfile;
+                    SplitSessionValues(out name, out gobfile, out jklfile);
+
+                    return jklfile;
+                }
+            }
+
+            public MatchFlags MatchFlags
+            {
+                get
+                {
+                    return (MatchFlags)user2;
+                }
+            }
+
+            public int TickRateMSEC
+            {
+                get
+                {
+                    return (int)user4;
+                }
+            }
         }
 
         [DllImport(DLLFile, CallingConvention = CallingConvention.StdCall, EntryPoint = "QuerySession")]
@@ -32,17 +115,29 @@ namespace Bone
 
             IntPtr pSessionName = Marshal.AllocHGlobal(512);
 
-            if (_QuerySession(szAddress, szPassword, out info.guidInstance, out info.maxPlayers, out info.curPlayers, pSessionName, out info.user1, out info.user2, out info.user3, out info.user4))
+            try
             {
-                info.sessionName = Marshal.PtrToStringUni(pSessionName);
+                if (_QuerySession(szAddress, szPassword, out info.guidInstance, out info.maxPlayers, out info.curPlayers, pSessionName, out info.user1, out info.user2, out info.user3, out info.user4))
+                {
+                    info.sessionName = Marshal.PtrToStringUni(pSessionName);
+                }
+                else
+                    // bad query;  dont return anything
+                    return null;
+
+
+                // if host is setting up or loading or something, but session is not ready,  all values are 0 except
+                // GUID is valid, and curPlayers=1.  lets check for this and pretend like we didnt get anything
+                if (info.maxPlayers <= 0)
+                    return null;
+
+
+                return info;
             }
-            else
-                // bad query;  dont return anything
-                info = null;
-
-            Marshal.FreeHGlobal(pSessionName);
-
-            return info;
+            finally
+            {
+                Marshal.FreeHGlobal(pSessionName);
+            }
         }
 
 
@@ -50,12 +145,10 @@ namespace Bone
         public static extern void Shutdown();
 
         [DllImport(DLLFile, CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool Host();
+        public static extern Result Host();
 
         [DllImport(DLLFile, CallingConvention = CallingConvention.StdCall)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool Join(ref Guid pInstanceGUID, string szAddresss, string szPassword=null);
+        public static extern Result Join(ref Guid pInstanceGUID, string szAddresss, string szPassword=null);
 
         [DllImport(DLLFile, CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.Bool)]

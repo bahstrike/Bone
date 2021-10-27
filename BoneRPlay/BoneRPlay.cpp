@@ -21,6 +21,16 @@ const char* FormatDPLAYRESULT(HRESULT hr);
 //dism /Online /enable-feature /FeatureName:"DirectPlay" /NoRestart
 
 
+enum Result : int
+{
+	Success,
+	NoDirectPlay,
+	AppNotRegistered,
+	CantCreateProcess,
+	UnknownFailure,
+};
+
+
 
 //{BF0613C0-DE79-11D0-99C9-00A02476AD4B}
 GUID GimmeJKGUID()
@@ -63,11 +73,18 @@ extern "C"
 		const char* szResult;
 		IDirectPlay3* pDirectPlay = nullptr;
 
-		CoCreateInstance(CLSID_DirectPlay, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlay3, (LPVOID*)&pDirectPlay);
+		hr = CoCreateInstance(CLSID_DirectPlay, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlay3, (LPVOID*)&pDirectPlay);
+		if (FAILED(hr))
+			return FALSE;
 
 
 		IDirectPlayLobby2* pLobby = nullptr;
-		CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2, (LPVOID*)&pLobby);
+		hr = CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2, (LPVOID*)&pLobby);
+		if (FAILED(hr))
+		{
+			pDirectPlay->Release();
+			return FALSE;
+		}
 
 		char* addressConnection = nullptr;
 		DWORD addressConnectionLen = 0;
@@ -85,6 +102,12 @@ extern "C"
 		delete[] addressConnection;
 
 		szResult = FormatDPLAYRESULT(hr);
+
+		if (FAILED(hr))
+		{
+			pDirectPlay->Release();
+			return FALSE;
+		}
 
 
 
@@ -112,7 +135,7 @@ extern "C"
 		pDirectPlay->Release();
 
 
-		if (pResultDesc == nullptr)
+		if (FAILED(hr) || pResultDesc == nullptr)
 			return FALSE;
 
 
@@ -156,13 +179,15 @@ extern "C"
 		g_uAppID = 0;
 	}
 
-	BOOL __stdcall Host()
+	Result __stdcall Host()
 	{
 		Shutdown();
 
 		HRESULT hr;
 
 		hr = CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2A, (LPVOID*)&g_pLobby);
+		if (FAILED(hr))
+			return Result::NoDirectPlay;
 
 		DPSESSIONDESC2 sessionDesc;
 		ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
@@ -185,20 +210,24 @@ extern "C"
 
 		hr = g_pLobby->RunApplication(0, &g_uAppID, &connectInfo, NULL);
 
-		//DPERR_UNKNOWNAPPLICATION    means missing registry entries, OR maybe need the dism.exe hax at top of file
-		//DPERR_CANTCREATEPROCESS     means we weren't run as administrator
-
 		if (hr != DP_OK)
 		{
 			g_pLobby->Release();
 			g_pLobby = nullptr;
-			return FALSE;
+
+			if (hr == DPERR_UNKNOWNAPPLICATION)
+				return Result::AppNotRegistered;
+
+			if (hr == DPERR_CANTCREATEPROCESS)
+				return Result::CantCreateProcess;
+
+			return Result::UnknownFailure;
 		}
 
-		return TRUE;
+		return Result::Success;
 	}
 
-	BOOL __stdcall Join(const GUID* pInstanceGUID, const char* szAddress, const char* szPassword)
+	Result __stdcall Join(const GUID* pInstanceGUID, const char* szAddress, const char* szPassword)
 	{
 		Shutdown();
 
@@ -206,7 +235,7 @@ extern "C"
 
 		hr = CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2A, (LPVOID*)&g_pLobby);
 		if (FAILED(hr))
-			return FALSE;
+			return Result::NoDirectPlay;
 
 		char* addressConnection = nullptr;
 		DWORD addressConnectionLen = 0;
@@ -250,17 +279,21 @@ extern "C"
 		hr = g_pLobby->RunApplication(0, &g_uAppID, &connectInfo, NULL);
 		delete[] addressConnection;
 
-		//DPERR_UNKNOWNAPPLICATION    means missing registry entries, OR maybe need the dism.exe hax at top of file
-		//DPERR_CANTCREATEPROCESS     means we weren't run as administrator
-
 		if (hr != DP_OK)
 		{
 			g_pLobby->Release();
 			g_pLobby = nullptr;
-			return FALSE;
+
+			if (hr == DPERR_UNKNOWNAPPLICATION)
+				return Result::AppNotRegistered;
+
+			if (hr == DPERR_CANTCREATEPROCESS)
+				return Result::CantCreateProcess;
+
+			return Result::UnknownFailure;
 		}
 
-		return TRUE;
+		return Result::Success;
 	}
 
 	BOOL __stdcall HasGameExited()

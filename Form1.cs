@@ -20,14 +20,37 @@ namespace Bone
             InitializeComponent();
         }
 
+        void ShowResultError(BoneRPlay.Result result)
+        {
+            string ermsg = null;
+
+            switch(result)
+            {
+                case BoneRPlay.Result.Success:
+                    return;// no message
+
+                case BoneRPlay.Result.NoDirectPlay:
+                    ermsg = "Failed to initialize DirectPlay.\n\nTry enabling legacy components in Options.\n\nIf that doesn't work, you may need to \"Turn Windows features on\" for Legacy Components->DirectPlay.";
+                    break;
+
+                case BoneRPlay.Result.AppNotRegistered:
+                    ermsg = "DirectPlay didn't recognize Jedi Knight as a registered application.";
+                    break;
+
+                case BoneRPlay.Result.CantCreateProcess:
+                    ermsg = "DirectPlay couldn't launch Jedi Knight.\n\nBone must be run as Administrator.\n\nAlso, verify that your Jedi Knight path/exe filenames are correct.";
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(ermsg))
+                MessageBox.Show(ermsg, "Bone", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private void hostButton_Click(object sender, EventArgs e)
         {
-            bool ret = BoneRPlay.Host();
-
-            if(!ret)
-            {
-                MessageBox.Show("we shit ourselves hosting");
-            }
+            BoneRPlay.Result result = BoneRPlay.Host();
+            if (result != BoneRPlay.Result.Success)
+                ShowResultError(result);
         }
 
         private void queryButton_Click(object sender, EventArgs e)
@@ -38,13 +61,19 @@ namespace Bone
                 sessionDetailsLabel.Text = "NO SESSION";
             else
                 sessionDetailsLabel.Text =
-                    $"instance: {info.guidInstance}\n" +
-                    $"session: {info.sessionName}\n" +
+                    //$"instance: {info.guidInstance}\n" +
+                    //$"session: {info.sessionName}\n" +
+                    $"session: {info.SessionName}\n" +
+                    $"gob: {info.GOBFile}\n" +
+                    $"jkl: {info.JKLFile}\n" +
                     $"players: {info.curPlayers}/{info.maxPlayers}\n" +
+                    $"match flags: {info.MatchFlags}\n" +
+                    $"tick rate (msec): {info.TickRateMSEC}" /*+
+                    $"\n" +
                     $"user1: {info.user1}\n" +
                     $"user2: {info.user2}\n" +
                     $"user3: {info.user3}\n" +
-                    $"user4: {info.user4}";
+                    $"user4: {info.user4}"*/;
         }
 
         private void joinButton_Click(object sender, EventArgs e)
@@ -57,8 +86,9 @@ namespace Bone
             }
 
 
-            BoneRPlay.Join(ref info.guidInstance, remoteAddress.Text, remotePassword.Text);
-
+            BoneRPlay.Result result = BoneRPlay.Join(ref info.guidInstance, remoteAddress.Text, remotePassword.Text);
+            if (result != BoneRPlay.Result.Success)
+                ShowResultError(result);
 
         }
 
