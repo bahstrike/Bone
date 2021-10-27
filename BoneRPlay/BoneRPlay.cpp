@@ -308,13 +308,13 @@ extern "C"
 		MessageBox(0, "blahlalh", 0, 0);
 
 
-#if 1
+#if 0
 		GUID guidInstance;
 		int maxPlayers, curPlayers;
 		wchar_t sessionName[512];
 		DWORD user1, user2, user3, user4;
 		QuerySession("192.168.5.3", nullptr, &guidInstance, &maxPlayers, &curPlayers, sessionName, &user1, &user2, &user3, &user4);
-#elif 0
+#elif 1
 		Host();
 #else
 

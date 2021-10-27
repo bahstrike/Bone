@@ -19,8 +19,6 @@ DirectPlay is old and fails to spawn JK.EXE unless its launcher is run as Admini
 ### modules
 - Bone.exe _(Bone: this is the application itself)_
 - BoneRPlay.dll _(Bone RescindedPlay: this module interfaces with DirectPlay)_
-- BoneRPlay_test.exe _(Bone RescindedPlay_test: for development; convenient EXE for launching test function in BoneRPlay.dll)_
-- 
 
 ### building
 - change/setup ur inc/lib paths for a sufficiently-old directx _(locally compiled with dx5.2sdk; not included.. source it urself)_

@@ -33,6 +33,20 @@ namespace Bone
                 return;
             }
 
+            string[] args = Environment.GetCommandLineArgs();
+            for(int i=1; i<args.Length; i++)
+            {
+                string arg = args[i];
+
+                if(arg.Equals("-test", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    BoneRPlay.test();
+
+                    // just bail after done invoking test func
+                    return;
+                }
+            }
+
             Application.Run(new Form1());
         }
     }

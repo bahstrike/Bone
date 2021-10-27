@@ -61,6 +61,7 @@ namespace Bone
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool HasGameExited();
 
-
+        [DllImport(DLLFile, CallingConvention = CallingConvention.StdCall)]
+        public static extern void test();
     }
 }
