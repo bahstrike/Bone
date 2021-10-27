@@ -36,6 +36,9 @@
             this.shutdownButton = new System.Windows.Forms.Button();
             this.processTimer = new System.Windows.Forms.Timer(this.components);
             this.gameExitedLabel = new System.Windows.Forms.Label();
+            this.registerDplayApp = new System.Windows.Forms.Button();
+            this.dplayRegisteredLabel = new System.Windows.Forms.Label();
+            this.UNregisterDplayApp = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // hostButton
@@ -99,11 +102,43 @@
             this.gameExitedLabel.TabIndex = 5;
             this.gameExitedLabel.Text = "blah";
             // 
+            // registerDplayApp
+            // 
+            this.registerDplayApp.Location = new System.Drawing.Point(388, 31);
+            this.registerDplayApp.Name = "registerDplayApp";
+            this.registerDplayApp.Size = new System.Drawing.Size(99, 23);
+            this.registerDplayApp.TabIndex = 6;
+            this.registerDplayApp.Text = "register dplay app";
+            this.registerDplayApp.UseVisualStyleBackColor = true;
+            this.registerDplayApp.Click += new System.EventHandler(this.registerDplayApp_Click);
+            // 
+            // dplayRegisteredLabel
+            // 
+            this.dplayRegisteredLabel.AutoSize = true;
+            this.dplayRegisteredLabel.Location = new System.Drawing.Point(493, 36);
+            this.dplayRegisteredLabel.Name = "dplayRegisteredLabel";
+            this.dplayRegisteredLabel.Size = new System.Drawing.Size(27, 13);
+            this.dplayRegisteredLabel.TabIndex = 7;
+            this.dplayRegisteredLabel.Text = "blah";
+            // 
+            // UNregisterDplayApp
+            // 
+            this.UNregisterDplayApp.Location = new System.Drawing.Point(366, 60);
+            this.UNregisterDplayApp.Name = "UNregisterDplayApp";
+            this.UNregisterDplayApp.Size = new System.Drawing.Size(121, 23);
+            this.UNregisterDplayApp.TabIndex = 8;
+            this.UNregisterDplayApp.Text = "UNregister dplay app";
+            this.UNregisterDplayApp.UseVisualStyleBackColor = true;
+            this.UNregisterDplayApp.Click += new System.EventHandler(this.UNregisterDplayApp_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 458);
+            this.Controls.Add(this.UNregisterDplayApp);
+            this.Controls.Add(this.dplayRegisteredLabel);
+            this.Controls.Add(this.registerDplayApp);
             this.Controls.Add(this.gameExitedLabel);
             this.Controls.Add(this.shutdownButton);
             this.Controls.Add(this.remoteAddress);
@@ -127,6 +162,9 @@
         private System.Windows.Forms.Button shutdownButton;
         private System.Windows.Forms.Timer processTimer;
         private System.Windows.Forms.Label gameExitedLabel;
+        private System.Windows.Forms.Button registerDplayApp;
+        private System.Windows.Forms.Label dplayRegisteredLabel;
+        private System.Windows.Forms.Button UNregisterDplayApp;
     }
 }
 
