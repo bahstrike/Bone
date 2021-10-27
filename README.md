@@ -7,7 +7,7 @@ _EXE download of version 0.000001 alpha is not available yet_
 ~~just download and run Bone.exe **as administrator** _(this is required for DirectPlay to launch JK)_~~
 
 #### Run as Administrator
-DirectPlay is old and fails to spawn the JK process unless its launcher is run as Administrator
+DirectPlay is old and fails to spawn JK.EXE unless its launcher is run as Administrator
 
 ### planned features
 - directly host or join JK games via IP address
