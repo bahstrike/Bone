@@ -13,15 +13,15 @@ _EXE download of version 0.000001 alpha is not available yet_
 - global games list (probably hosted from bah.wtf)
 
 
-### building
-- change/set up ur inc/lib paths for directx (locally compiled with dx5.2sdk; not included.. source it urself)
-- u MUST run visualstudio as Administrator,  then load the project;  the admin priv crosses over to the debugged application
-
-
 ### modules
 - Bone.exe _(Bone: this is the application itself)_
 - BoneRPlay.dll _(Bone RescindedPlay: this module interfaces with DirectPlay)_
 - BoneRPlay_test.exe _(Bone RescindedPlay_test: for development; convenient EXE for launching test function in BoneRPlay.dll)_
+- 
+
+### building
+- change/setup ur inc/lib paths for directx (locally compiled with dx5.2sdk; not included.. source it urself)
+- u MUST run visualstudio as Administrator,  then load the project;  the admin priv crosses over to the debugged application
 
 
 ## credits
