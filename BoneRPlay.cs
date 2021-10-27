@@ -18,12 +18,15 @@ namespace Bone
         public static extern void Shutdown();
 
         [DllImport(DLLFile, CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool Host();
 
         [DllImport(DLLFile, CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool Join(IntPtr pInstanceGUID, string szAddresss);
 
         [DllImport(DLLFile, CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool HasGameExited();
 
 

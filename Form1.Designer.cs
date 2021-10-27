@@ -35,7 +35,7 @@
             this.remoteAddress = new System.Windows.Forms.TextBox();
             this.shutdownButton = new System.Windows.Forms.Button();
             this.processTimer = new System.Windows.Forms.Timer(this.components);
-            this.detectGameLabel = new System.Windows.Forms.Label();
+            this.gameExitedLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // hostButton
@@ -90,21 +90,21 @@
             this.processTimer.Enabled = true;
             this.processTimer.Tick += new System.EventHandler(this.processTimer_Tick);
             // 
-            // detectGameLabel
+            // gameExitedLabel
             // 
-            this.detectGameLabel.AutoSize = true;
-            this.detectGameLabel.Location = new System.Drawing.Point(241, 282);
-            this.detectGameLabel.Name = "detectGameLabel";
-            this.detectGameLabel.Size = new System.Drawing.Size(87, 13);
-            this.detectGameLabel.TabIndex = 5;
-            this.detectGameLabel.Text = "active game: NO";
+            this.gameExitedLabel.AutoSize = true;
+            this.gameExitedLabel.Location = new System.Drawing.Point(241, 282);
+            this.gameExitedLabel.Name = "gameExitedLabel";
+            this.gameExitedLabel.Size = new System.Drawing.Size(27, 13);
+            this.gameExitedLabel.TabIndex = 5;
+            this.gameExitedLabel.Text = "blah";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 458);
-            this.Controls.Add(this.detectGameLabel);
+            this.Controls.Add(this.gameExitedLabel);
             this.Controls.Add(this.shutdownButton);
             this.Controls.Add(this.remoteAddress);
             this.Controls.Add(this.queryButton);
@@ -126,7 +126,7 @@
         private System.Windows.Forms.TextBox remoteAddress;
         private System.Windows.Forms.Button shutdownButton;
         private System.Windows.Forms.Timer processTimer;
-        private System.Windows.Forms.Label detectGameLabel;
+        private System.Windows.Forms.Label gameExitedLabel;
     }
 }
 

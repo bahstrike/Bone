@@ -42,7 +42,7 @@ namespace Bone
             // BoneRPlay.QuerySession()  to get instance GUID
 
 
-            //BoneRPlay.Join(needInstanceGUID, remoteAddress.Text);
+            BoneRPlay.Join(IntPtr.Zero/*needInstanceGUID*/, remoteAddress.Text);
 
 
         }
@@ -61,7 +61,7 @@ namespace Bone
         {
 
             // check if game is still active
-            detectGameLabel.Text = $"active game: {(!BoneRPlay.HasGameExited()?"YES":"NO")}";
+            gameExitedLabel.Text = $"game exited: {BoneRPlay.HasGameExited()}";
 
         }
     }

@@ -157,7 +157,7 @@ extern "C"
 		g_uAppID = 0;
 	}
 
-	bool __stdcall Host()
+	BOOL __stdcall Host()
 	{
 		Shutdown();
 
@@ -193,13 +193,13 @@ extern "C"
 		{
 			g_pLobby->Release();
 			g_pLobby = nullptr;
-			return false;
+			return FALSE;
 		}
 
-		return true;
+		return TRUE;
 	}
 
-	bool __stdcall Join(const GUID* pInstanceGUID, const char* szAddress)
+	BOOL __stdcall Join(const GUID* pInstanceGUID, const char* szAddress)
 	{
 		Shutdown();
 
@@ -207,7 +207,7 @@ extern "C"
 
 		hr = CoCreateInstance(CLSID_DirectPlayLobby, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlayLobby2A, (LPVOID*)&g_pLobby);
 		if (FAILED(hr))
-			return false;
+			return FALSE;
 
 		char* addressConnection = nullptr;
 		DWORD addressConnectionLen = 0;
@@ -221,7 +221,7 @@ extern "C"
 		ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
 		sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
 		sessionDesc.guidApplication = GimmeJKGUID();
-		sessionDesc.guidInstance = *pInstanceGUID;
+		sessionDesc.guidInstance = (pInstanceGUID==nullptr) ? GimmeInstanceGUID() : (*pInstanceGUID);
 		sessionDesc.lpszSessionNameA = s_szBlank;
 		sessionDesc.lpszPasswordA = s_szBlank;
 
@@ -250,16 +250,16 @@ extern "C"
 		{
 			g_pLobby->Release();
 			g_pLobby = nullptr;
-			return false;
+			return FALSE;
 		}
 
-		return true;
+		return TRUE;
 	}
 
-	bool __stdcall HasGameExited()
+	BOOL __stdcall HasGameExited()
 	{
 		if (g_pLobby == nullptr)
-			return true;
+			return TRUE;
 
 		DWORD messageFlags = DPLMSG_SYSTEM;
 		int message[1024];
@@ -269,26 +269,26 @@ extern "C"
 
 		// if no messages, game still running
 		if (hr == DPERR_NOMESSAGES)
-			return false;
+			return FALSE;
 
 		// if error, game is not running
 		if (hr != DP_OK)
-			return true;
+			return TRUE;
 
 
 		// ignore if not system message
 		if ((messageFlags & DPLMSG_SYSTEM) == 0)
-			return false;
+			return FALSE;
 
 		int code = *(int*)message;//dwType,guidInstance
 
 		// if exit code, we're done
 		if (code == 4)
-			return true;
+			return TRUE;
 
 
 		// ignore anything else
-		return false;
+		return FALSE;
 	}
 
 
