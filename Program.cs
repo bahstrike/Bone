@@ -29,7 +29,7 @@ namespace Bone
 
             if(!IsRunningAsAdministrator)
             {
-                MessageBox.Show("This program does not work unless run as Administrator");
+                MessageBox.Show("This program does not work unless run as Administrator.", "Bone", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
