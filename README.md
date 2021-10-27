@@ -20,5 +20,8 @@ just download and run Bone.exe **as administrator** _(this is required for Direc
 special thanks to:
 - SM_Sith_Lord _(sharing insight)_
 - shinyquagsire23 _(sharing insight)_
+- RandomStarfighter _(sharing insight)_
 - ZeqMacaw _(originating the DirectPlay efforts)_
 - AcidRain _(originating the DirectPlay efforts)_
+
+**AND EVERYBODY ELSE WHO SUPPORTS THE PROJECT!**
