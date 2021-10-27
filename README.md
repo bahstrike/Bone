@@ -3,6 +3,7 @@ directplay lobby project for jedi knight dark forces 2
 
 ## usage
 _EXE download of version 0.000001 alpha is not available yet_
+
 ~~just download and run Bone.exe **as administrator** _(this is required for DirectPlay to launch JK)_~~
 
 ### planned features
