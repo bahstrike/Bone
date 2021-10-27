@@ -50,34 +50,33 @@ GUID GimmeInstanceGUID()
 }
 
 
-extern "C"
+BOOL FAR PASCAL DPlayEnumSessions(LPCDPSESSIONDESC2 pSrc, LPDWORD lpdwTimeOut, DWORD dwFlags, LPVOID lpContext)
 {
-	BOOL FAR PASCAL DPlayEnumSessions(LPCDPSESSIONDESC2 pSrc, LPDWORD lpdwTimeOut, DWORD dwFlags, LPVOID lpContext)
+	if (dwFlags & DPESC_TIMEDOUT)
+		return FALSE;
+
+	DPSESSIONDESC2* &pSession = *(DPSESSIONDESC2**)lpContext;
+	pSession = new DPSESSIONDESC2;
+	memcpy(pSession, pSrc, sizeof(DPSESSIONDESC2));
+
+	if (pSrc->lpszSessionName != nullptr)
 	{
-		if (dwFlags & DPESC_TIMEDOUT)
-			return FALSE;
-
-		DPSESSIONDESC2* &pSession = *(DPSESSIONDESC2**)lpContext;
-		pSession = new DPSESSIONDESC2;
-		memcpy(pSession, pSrc, sizeof(DPSESSIONDESC2));
-
-		if (pSrc->lpszSessionName != nullptr)
-		{
-			pSession->lpszSessionName = new wchar_t[256];
-			wcscpy(pSession->lpszSessionName, pSrc->lpszSessionName);
-		}
-
-		if (pSrc->lpszPassword != nullptr)
-		{
-			pSession->lpszPassword = new wchar_t[256];
-			wcscpy(pSession->lpszPassword, pSrc->lpszPassword);
-		}
-
-		return FALSE;// stop enumerating if we found one.. only support 1 session for query right now
+		pSession->lpszSessionName = new wchar_t[256];
+		wcscpy(pSession->lpszSessionName, pSrc->lpszSessionName);
 	}
 
+	if (pSrc->lpszPassword != nullptr)
+	{
+		pSession->lpszPassword = new wchar_t[256];
+		wcscpy(pSession->lpszPassword, pSrc->lpszPassword);
+	}
+
+	return FALSE;// stop enumerating if we found one.. only support 1 session for query right now
+}
 
 
+extern "C"
+{
 
 	void __stdcall QuerySession(const char* szAddress)
 	{
@@ -200,7 +199,7 @@ extern "C"
 		return true;
 	}
 
-	bool __stdcall Join(GUID instanceGuid, const char* szAddress)
+	bool __stdcall Join(const GUID* pInstanceGUID, const char* szAddress)
 	{
 		Shutdown();
 
@@ -222,7 +221,7 @@ extern "C"
 		ZeroMemory(&sessionDesc, sizeof(DPSESSIONDESC2));
 		sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
 		sessionDesc.guidApplication = GimmeJKGUID();
-		sessionDesc.guidInstance = instanceGuid;
+		sessionDesc.guidInstance = *pInstanceGUID;
 		sessionDesc.lpszSessionNameA = s_szBlank;
 		sessionDesc.lpszPasswordA = s_szBlank;
 
@@ -308,7 +307,7 @@ extern "C"
 
 		GUID instance = GimmeInstanceGUID();
 
-		Join(instance, "192.168.5.3");
+		Join(&instance, "192.168.5.3");
 #endif
 
 
