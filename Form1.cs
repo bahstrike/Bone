@@ -59,7 +59,9 @@ namespace Bone
                 ShowResultError(result);
         }
 
-        private void queryButton_Click(object sender, EventArgs e)
+        const string BadSessionText = "NO SESSION";
+
+        public BoneRPlay.SessionInfo QueryRemoteIP()
         {
             Cursor = Cursors.WaitCursor;
             Enabled = false;
@@ -67,10 +69,10 @@ namespace Bone
 
             try
             {
-                BoneRPlay.SessionInfo info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
+                BoneRPlay.SessionInfo info = BoneRPlay.QuerySession(remoteAddress.Text/*, remotePassword.Text*/);
 
                 if (info == null)
-                    sessionDetailsLabel.Text = "NO SESSION";
+                    sessionDetailsLabel.Text = BadSessionText;
                 else
                     sessionDetailsLabel.Text =
                         //$"instance: {info.guidInstance}\n" +
@@ -85,12 +87,22 @@ namespace Bone
                     $"user2: {info.user2}\n" +
                     $"user3: {info.user3}\n" +
                     $"user4: {info.user4}"*/;
+
+                sessionDetailsLabel.Update();
+
+                return info;
             }
             finally
             {
                 Cursor = Cursors.Default;
                 Enabled = true;
             }
+
+        }
+
+        private void queryButton_Click(object sender, EventArgs e)
+        {
+            QueryRemoteIP();
 
         }
 
@@ -103,34 +115,11 @@ namespace Bone
             }
 
 
-            BoneRPlay.SessionInfo info = null;
-
-
-            Cursor = Cursors.WaitCursor;
-            Enabled = false;
-            Update();
-
-            try
-            {
-
-                info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
-                if (info == null)
-                {
-                    MessageBox.Show("Couldn't find session.", "Bone", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-            }
-            finally
-            {
-                Cursor = Cursors.Default;
-                Enabled = true;
-            }
-
-
+            BoneRPlay.SessionInfo info = QueryRemoteIP();
             if (info == null)
                 return;
 
-            BoneRPlay.Result result = BoneRPlay.Join(ref info.guidInstance, remoteAddress.Text, remotePassword.Text);
+            BoneRPlay.Result result = BoneRPlay.Join(ref info.guidInstance, remoteAddress.Text/*, remotePassword.Text*/);
             if (result != BoneRPlay.Result.Success)
                 ShowResultError(result);
         }
@@ -171,7 +160,8 @@ namespace Bone
             remoteAddress.Text = "192.168.5.3";
 #endif
 
-            sessionDetailsLabel.Text = string.Empty;
+            
+            sessionDetailsLabel.Text = BadSessionText;
 
 
 

@@ -35,10 +35,8 @@
             this.remoteAddress = new System.Windows.Forms.TextBox();
             this.processTimer = new System.Windows.Forms.Timer(this.components);
             this.sessionDetailsLabel = new System.Windows.Forms.Label();
-            this.remotePassword = new System.Windows.Forms.TextBox();
             this.optionsButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.localAddress = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -91,26 +89,23 @@
             // 
             // sessionDetailsLabel
             // 
-            this.sessionDetailsLabel.AutoSize = true;
+            this.sessionDetailsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.sessionDetailsLabel.AutoEllipsis = true;
+            this.sessionDetailsLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.sessionDetailsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.sessionDetailsLabel.Location = new System.Drawing.Point(265, 66);
             this.sessionDetailsLabel.Name = "sessionDetailsLabel";
-            this.sessionDetailsLabel.Size = new System.Drawing.Size(39, 20);
+            this.sessionDetailsLabel.Size = new System.Drawing.Size(236, 106);
             this.sessionDetailsLabel.TabIndex = 9;
-            this.sessionDetailsLabel.Text = "blah";
-            // 
-            // remotePassword
-            // 
-            this.remotePassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.remotePassword.Location = new System.Drawing.Point(305, 24);
-            this.remotePassword.Name = "remotePassword";
-            this.remotePassword.Size = new System.Drawing.Size(131, 26);
-            this.remotePassword.TabIndex = 10;
+            this.sessionDetailsLabel.Text = "blah\r\nblerr\r\nbloo\r\nblee\r\nbluh";
             // 
             // optionsButton
             // 
+            this.optionsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.optionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.optionsButton.Location = new System.Drawing.Point(491, 12);
+            this.optionsButton.Location = new System.Drawing.Point(410, 12);
             this.optionsButton.Name = "optionsButton";
             this.optionsButton.Size = new System.Drawing.Size(91, 41);
             this.optionsButton.TabIndex = 13;
@@ -127,23 +122,14 @@
             this.label1.TabIndex = 14;
             this.label1.Text = "Remote IP Address";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(302, 8);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 13);
-            this.label2.TabIndex = 15;
-            this.label2.Text = "Password";
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(9, 8);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(78, 13);
+            this.label3.Size = new System.Drawing.Size(75, 13);
             this.label3.TabIndex = 17;
-            this.label3.Text = "My IP Address:";
+            this.label3.Text = "My IP Address";
             // 
             // localAddress
             // 
@@ -160,13 +146,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(594, 289);
+            this.ClientSize = new System.Drawing.Size(513, 181);
             this.Controls.Add(this.localAddress);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.optionsButton);
-            this.Controls.Add(this.remotePassword);
             this.Controls.Add(this.sessionDetailsLabel);
             this.Controls.Add(this.remoteAddress);
             this.Controls.Add(this.queryButton);
@@ -190,10 +174,8 @@
         private System.Windows.Forms.TextBox remoteAddress;
         private System.Windows.Forms.Timer processTimer;
         private System.Windows.Forms.Label sessionDetailsLabel;
-        private System.Windows.Forms.TextBox remotePassword;
         private System.Windows.Forms.Button optionsButton;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox localAddress;
     }
