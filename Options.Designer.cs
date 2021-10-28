@@ -29,20 +29,21 @@
         private void InitializeComponent()
         {
             this.jkGroup = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.jkExePath = new System.Windows.Forms.TextBox();
-            this.jkExeBrowse = new System.Windows.Forms.Button();
-            this.argWindowGui = new System.Windows.Forms.CheckBox();
-            this.argDevmode = new System.Windows.Forms.CheckBox();
-            this.argFrameRate = new System.Windows.Forms.CheckBox();
-            this.argDispStats = new System.Windows.Forms.CheckBox();
-            this.argNoHud = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.jkpathGood = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.argNoHud = new System.Windows.Forms.CheckBox();
+            this.argDispStats = new System.Windows.Forms.CheckBox();
+            this.argFrameRate = new System.Windows.Forms.CheckBox();
+            this.argDevmode = new System.Windows.Forms.CheckBox();
+            this.argWindowGui = new System.Windows.Forms.CheckBox();
+            this.jkExeBrowse = new System.Windows.Forms.Button();
+            this.jkExePath = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.enableDplayDISM = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.showIp = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.jkGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.jkpathGood)).BeginInit();
             this.SuspendLayout();
@@ -68,24 +69,73 @@
             this.jkGroup.TabStop = false;
             this.jkGroup.Text = "Jedi Knight";
             // 
-            // label1
+            // jkpathGood
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(88, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Executable Path:";
+            this.jkpathGood.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.jkpathGood.Location = new System.Drawing.Point(9, 44);
+            this.jkpathGood.Name = "jkpathGood";
+            this.jkpathGood.Size = new System.Drawing.Size(20, 20);
+            this.jkpathGood.TabIndex = 1;
+            this.jkpathGood.TabStop = false;
             // 
-            // jkExePath
+            // label2
             // 
-            this.jkExePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.jkExePath.Location = new System.Drawing.Point(35, 44);
-            this.jkExePath.Name = "jkExePath";
-            this.jkExePath.Size = new System.Drawing.Size(368, 20);
-            this.jkExePath.TabIndex = 1;
-            this.jkExePath.TextChanged += new System.EventHandler(this.jkExePath_TextChanged);
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 82);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(129, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Command-line Arguments:";
+            // 
+            // argNoHud
+            // 
+            this.argNoHud.AutoSize = true;
+            this.argNoHud.Location = new System.Drawing.Point(6, 190);
+            this.argNoHud.Name = "argNoHud";
+            this.argNoHud.Size = new System.Drawing.Size(65, 17);
+            this.argNoHud.TabIndex = 7;
+            this.argNoHud.Text = "-noHUD";
+            this.argNoHud.UseVisualStyleBackColor = true;
+            // 
+            // argDispStats
+            // 
+            this.argDispStats.AutoSize = true;
+            this.argDispStats.Location = new System.Drawing.Point(6, 167);
+            this.argDispStats.Name = "argDispStats";
+            this.argDispStats.Size = new System.Drawing.Size(72, 17);
+            this.argDispStats.TabIndex = 6;
+            this.argDispStats.Text = "-dispStats";
+            this.argDispStats.UseVisualStyleBackColor = true;
+            // 
+            // argFrameRate
+            // 
+            this.argFrameRate.AutoSize = true;
+            this.argFrameRate.Location = new System.Drawing.Point(6, 144);
+            this.argFrameRate.Name = "argFrameRate";
+            this.argFrameRate.Size = new System.Drawing.Size(78, 17);
+            this.argFrameRate.TabIndex = 5;
+            this.argFrameRate.Text = "-frameRate";
+            this.argFrameRate.UseVisualStyleBackColor = true;
+            // 
+            // argDevmode
+            // 
+            this.argDevmode.AutoSize = true;
+            this.argDevmode.Location = new System.Drawing.Point(6, 121);
+            this.argDevmode.Name = "argDevmode";
+            this.argDevmode.Size = new System.Drawing.Size(74, 17);
+            this.argDevmode.TabIndex = 4;
+            this.argDevmode.Text = "-devMode";
+            this.argDevmode.UseVisualStyleBackColor = true;
+            // 
+            // argWindowGui
+            // 
+            this.argWindowGui.AutoSize = true;
+            this.argWindowGui.Location = new System.Drawing.Point(6, 98);
+            this.argWindowGui.Name = "argWindowGui";
+            this.argWindowGui.Size = new System.Drawing.Size(84, 17);
+            this.argWindowGui.TabIndex = 3;
+            this.argWindowGui.Text = "-windowGUI";
+            this.argWindowGui.UseVisualStyleBackColor = true;
             // 
             // jkExeBrowse
             // 
@@ -98,73 +148,25 @@
             this.jkExeBrowse.UseVisualStyleBackColor = true;
             this.jkExeBrowse.Click += new System.EventHandler(this.jkExeBrowse_Click);
             // 
-            // argWindowGui
+            // jkExePath
             // 
-            this.argWindowGui.AutoSize = true;
-            this.argWindowGui.Location = new System.Drawing.Point(6, 98);
-            this.argWindowGui.Name = "argWindowGui";
-            this.argWindowGui.Size = new System.Drawing.Size(84, 17);
-            this.argWindowGui.TabIndex = 3;
-            this.argWindowGui.Text = "-windowGUI";
-            this.argWindowGui.UseVisualStyleBackColor = true;
+            this.jkExePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.jkExePath.Location = new System.Drawing.Point(35, 44);
+            this.jkExePath.Name = "jkExePath";
+            this.jkExePath.Size = new System.Drawing.Size(368, 20);
+            this.jkExePath.TabIndex = 1;
+            this.jkExePath.Text = "dummy";
+            this.jkExePath.TextChanged += new System.EventHandler(this.jkExePath_TextChanged);
             // 
-            // argDevmode
+            // label1
             // 
-            this.argDevmode.AutoSize = true;
-            this.argDevmode.Location = new System.Drawing.Point(6, 121);
-            this.argDevmode.Name = "argDevmode";
-            this.argDevmode.Size = new System.Drawing.Size(74, 17);
-            this.argDevmode.TabIndex = 4;
-            this.argDevmode.Text = "-devMode";
-            this.argDevmode.UseVisualStyleBackColor = true;
-            // 
-            // argFrameRate
-            // 
-            this.argFrameRate.AutoSize = true;
-            this.argFrameRate.Location = new System.Drawing.Point(6, 144);
-            this.argFrameRate.Name = "argFrameRate";
-            this.argFrameRate.Size = new System.Drawing.Size(78, 17);
-            this.argFrameRate.TabIndex = 5;
-            this.argFrameRate.Text = "-frameRate";
-            this.argFrameRate.UseVisualStyleBackColor = true;
-            // 
-            // argDispStats
-            // 
-            this.argDispStats.AutoSize = true;
-            this.argDispStats.Location = new System.Drawing.Point(6, 167);
-            this.argDispStats.Name = "argDispStats";
-            this.argDispStats.Size = new System.Drawing.Size(72, 17);
-            this.argDispStats.TabIndex = 6;
-            this.argDispStats.Text = "-dispStats";
-            this.argDispStats.UseVisualStyleBackColor = true;
-            // 
-            // argNoHud
-            // 
-            this.argNoHud.AutoSize = true;
-            this.argNoHud.Location = new System.Drawing.Point(6, 190);
-            this.argNoHud.Name = "argNoHud";
-            this.argNoHud.Size = new System.Drawing.Size(65, 17);
-            this.argNoHud.TabIndex = 7;
-            this.argNoHud.Text = "-noHUD";
-            this.argNoHud.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 82);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(129, 13);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Command-line Arguments:";
-            // 
-            // jkpathGood
-            // 
-            this.jkpathGood.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.jkpathGood.Location = new System.Drawing.Point(9, 44);
-            this.jkpathGood.Name = "jkpathGood";
-            this.jkpathGood.Size = new System.Drawing.Size(20, 20);
-            this.jkpathGood.TabIndex = 1;
-            this.jkpathGood.TabStop = false;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(88, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Executable Path:";
             // 
             // enableDplayDISM
             // 
@@ -210,11 +212,22 @@
             this.showIp.Size = new System.Drawing.Size(165, 21);
             this.showIp.TabIndex = 4;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(183, 292);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(63, 13);
+            this.label5.TabIndex = 5;
+            this.label5.Text = "no affiliation";
+            // 
             // Options
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(504, 459);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.showIp);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -251,5 +264,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox showIp;
+        private System.Windows.Forms.Label label5;
     }
 }

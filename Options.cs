@@ -43,9 +43,20 @@ namespace Bone
             argNoHud.Checked = (cmd & AppRegistry.CmdLine.nohud) != 0;
 
 
+            // pick sensible defaults if first run?
+            string defaultIPMethod = "off";
+            if(Program.HadNoConfigINI)
+            {
+                argWindowGui.Checked = true;// this usually helps fix ppl.. so default on;  i mean they can turn off
+                defaultIPMethod = "ipinfo";// most ppl prolly want to see their external IP without havin to look externally;  i mean they can turn off
+
+                // search steam folder for path?   otherwise we just leave blank, and its up to them
+
+            }
+
 
             DetermineIPMethod ipmethod;
-            if (!Enum.TryParse<DetermineIPMethod>(Program.ConfigINI.GetKey("Bone", "DetermineIPMethod", "ipinfo"), true, out ipmethod))
+            if (!Enum.TryParse<DetermineIPMethod>(Program.ConfigINI.GetKey("Bone", "DetermineIPMethod", defaultIPMethod), true, out ipmethod))
                 ipmethod = DetermineIPMethod.OFF;
 
             showIp.SelectedIndex = (int)ipmethod;
@@ -75,6 +86,31 @@ namespace Bone
 
         private void Options_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (!File.Exists(jkExePath.Text))
+            {
+                if (Program.HadNoConfigINI)
+                {
+                    if (MessageBox.Show("Closing Options without a valid EXE will exit the program.", "Bone", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    // if its first launch then we should just exit without doing anything to INI or registry;  leave no trace.. maybe dude doesnt care yet
+                    Program.WantQuit = true;
+                    return;
+                }
+
+
+                MessageBox.Show("Closing Options without a valid EXE will render this application useless.", "Bone", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+
+
+            DetermineIPMethod ipmethod = (DetermineIPMethod)showIp.SelectedIndex;
+            Program.ConfigINI.WriteKey("Bone", "DetermineIPMethod", ipmethod.ToString());
+
+
             // write back to registry
 
             AppRegistry.EXEPath = jkExePath.Text;
@@ -93,12 +129,6 @@ namespace Bone
                 cmd |= AppRegistry.CmdLine.nohud;
             AppRegistry.CommandLine = cmd;
 
-
-
-
-
-            DetermineIPMethod ipmethod = (DetermineIPMethod)showIp.SelectedIndex;
-            Program.ConfigINI.WriteKey("Bone", "DetermineIPMethod", ipmethod.ToString());
         }
 
         private void enableDplayDISM_Click(object sender, EventArgs e)

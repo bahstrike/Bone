@@ -136,6 +136,11 @@ namespace Bone
 
         private void processTimer_Tick(object sender, EventArgs e)
         {
+            if(Program.WantQuit)
+            {
+                Close();
+                return;
+            }
 
             // check if game is still active
             //gameExitedLabel.Text = $"game exited: {BoneRPlay.HasGameExited()}";

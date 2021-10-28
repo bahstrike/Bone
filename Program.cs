@@ -73,6 +73,8 @@ namespace Bone
         public static bool HadNoConfigINI = false;
         public static Smith.INIFile ConfigINI = null;
 
+        public static bool WantQuit = false;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -92,19 +94,44 @@ namespace Bone
             {
                 ExtractFile("BoneRPlay.dll");
 
+
+
+                // handle single switch cmdline args (no params)
                 string[] args = Environment.GetCommandLineArgs();
                 for (int i = 1; i < args.Length; i++)
                 {
                     string arg = args[i];
+                    if (arg.Length < 1)
+                        continue;
 
-                    if (arg.Equals("-test", StringComparison.InvariantCultureIgnoreCase))
+                    if (arg[0] != '-' && arg[0] != '/')
+                        continue;
+
+                    arg = arg.Substring(1).ToLowerInvariant();
+                    switch(arg)
                     {
-                        BoneRPlay.test();
+                        case "?":
+                        case "help":
+                            MessageBox.Show(
+                                "-help : this message\n"
+                                + "-unregister : remove directplay registry folder for jedi knight\n"
+                                //+ "-test : development use\n"
+                                , "Bone", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
 
-                        // just bail after done invoking test func
-                        return;
+                        case "unregister":
+                            AppRegistry.UnregisterAll();
+                            MessageBox.Show("Unregistered Jedi Knight from DirectPlay registry.", "Bone", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+
+                        case "test":
+                            BoneRPlay.test();
+                            return;
                     }
+
                 }
+
+
 
 
                 HadNoConfigINI = !System.IO.File.Exists(INIPath);
