@@ -9,6 +9,8 @@ _EXE download of version 0.000001 alpha is not available yet_
 #### Run as Administrator
 DirectPlay is old and fails to spawn JK.EXE unless its launcher is run as Administrator
 
+## details
+
 ### features
 - directly host or join JK games via IP address
 
@@ -17,6 +19,8 @@ DirectPlay is old and fails to spawn JK.EXE unless its launcher is run as Admini
 - patchcommander-like UI for mixing&matching patches
 - global games list (probably hosted from bah.wtf)
 
+
+## development
 
 ### modules
 - Bone.exe _(Bone: this is the application itself)_
