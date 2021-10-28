@@ -9,8 +9,10 @@ _EXE download of version 0.000001 alpha is not available yet_
 #### Run as Administrator
 DirectPlay is old and fails to spawn JK.EXE unless its launcher is run as Administrator
 
-### planned features
+### features
 - directly host or join JK games via IP address
+
+### planned features
 - automatic host->client transfer of map/patch
 - patchcommander-like UI for mixing&matching patches
 - global games list (probably hosted from bah.wtf)
