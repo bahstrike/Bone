@@ -61,24 +61,37 @@ namespace Bone
 
         private void queryButton_Click(object sender, EventArgs e)
         {
-            BoneRPlay.SessionInfo info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
+            Cursor = Cursors.WaitCursor;
+            Enabled = false;
+            Update();
 
-            if (info == null)
-                sessionDetailsLabel.Text = "NO SESSION";
-            else
-                sessionDetailsLabel.Text =
-                    //$"instance: {info.guidInstance}\n" +
-                    //$"session: {info.sessionName}\n" +
-                    $"Session: {info.SessionName}\n" +
-                    $"Level: {info.GOBFile} ({info.JKLFile})\n" +
-                    $"Players: {info.curPlayers}/{info.maxPlayers}\n" +
-                    $"Settings: {(info.MatchFlags == 0 ? "None" : info.MatchFlags.ToString())}\n" +
-                    $"Tick Rate (msec): {info.TickRateMSEC}" /*+
+            try
+            {
+                BoneRPlay.SessionInfo info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
+
+                if (info == null)
+                    sessionDetailsLabel.Text = "NO SESSION";
+                else
+                    sessionDetailsLabel.Text =
+                        //$"instance: {info.guidInstance}\n" +
+                        //$"session: {info.sessionName}\n" +
+                        $"Session: {info.SessionName}\n" +
+                        $"Level: {info.GOBFile} ({info.JKLFile})\n" +
+                        $"Players: {info.curPlayers}/{info.maxPlayers}\n" +
+                        $"Settings: {(info.MatchFlags == 0 ? "None" : info.MatchFlags.ToString())}\n" +
+                        $"Tick Rate (msec): {info.TickRateMSEC}" /*+
                     $"\n" +
                     $"user1: {info.user1}\n" +
                     $"user2: {info.user2}\n" +
                     $"user3: {info.user3}\n" +
                     $"user4: {info.user4}"*/;
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+                Enabled = true;
+            }
+
         }
 
         private void joinButton_Click(object sender, EventArgs e)
@@ -89,18 +102,37 @@ namespace Bone
                 return;
             }
 
-            BoneRPlay.SessionInfo info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
-            if(info == null)
+
+            BoneRPlay.SessionInfo info = null;
+
+
+            Cursor = Cursors.WaitCursor;
+            Enabled = false;
+            Update();
+
+            try
             {
-                MessageBox.Show("Couldn't find session.", "Bone", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+
+                info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
+                if (info == null)
+                {
+                    MessageBox.Show("Couldn't find session.", "Bone", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+                Enabled = true;
             }
 
+
+            if (info == null)
+                return;
 
             BoneRPlay.Result result = BoneRPlay.Join(ref info.guidInstance, remoteAddress.Text, remotePassword.Text);
             if (result != BoneRPlay.Result.Success)
                 ShowResultError(result);
-
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -235,12 +267,13 @@ namespace Bone
             {
                 Clipboard.SetText(localAddress.Text);
 
-                localAddress.DeselectAll();
+                //localAddress.DeselectAll();
             }
             catch
             {
 
             }
         }
+
     }
 }
