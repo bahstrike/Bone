@@ -337,7 +337,7 @@ extern "C"
 		MessageBox(0, "blahlalh", 0, 0);
 
 
-#if 1
+#if 0
 		GUID guidInstance;
 		int maxPlayers, curPlayers;
 		wchar_t sessionName[512];

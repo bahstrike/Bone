@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using Microsoft.Win32;
 
 namespace Bone
 {
@@ -92,7 +91,7 @@ namespace Bone
             BoneRPlay.SessionInfo info = BoneRPlay.QuerySession(remoteAddress.Text, remotePassword.Text);
             if(info == null)
             {
-                MessageBox.Show("Couldn't find session");
+                MessageBox.Show("Couldn't find session.", "Bone", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -117,84 +116,45 @@ namespace Bone
         {
 
             // check if game is still active
-            gameExitedLabel.Text = $"game exited: {BoneRPlay.HasGameExited()}";
+            //gameExitedLabel.Text = $"game exited: {BoneRPlay.HasGameExited()}";
 
 
-            dplayRegisteredLabel.Text = $"registered: {IsJKRegistered}";
+            //dplayRegisteredLabel.Text = $"registered: {AppRegistry.IsJKRegistered}";
+
+
+            bool jkRegistered = AppRegistry.IsJKRegistered;
+            bool hasExited = BoneRPlay.HasGameExited();
+            optionsButton.Enabled = hasExited;
+            hostButton.Enabled = jkRegistered && hasExited;
+            joinButton.Enabled = jkRegistered && hasExited;
         }
 
-
-        const string Registry_DPlayApps = @"SOFTWARE\Wow6432Node\Microsoft\DirectPlay\Applications";
-        const string Registry_AppName = "Jedi Knight 1.0";
-
-        string RegistryFinalRoot
-        {
-            get
-            {
-                return $@"HKEY_LOCAL_MACHINE\{Registry_DPlayApps}\{Registry_AppName}";
-            }
-        }
-
-        bool IsJKRegistered
-        {
-            get
-            {
-                if (Registry.GetValue(RegistryFinalRoot, "Guid", null) == null)
-                    return false;
-
-                string path = Registry.GetValue(RegistryFinalRoot, "Path", null) as string;
-                string file = Registry.GetValue(RegistryFinalRoot, "File", null) as string;
-                if (path == null || file == null)
-                    return false;
-
-                string exepath = Path.Combine(path, file);
-                if (!File.Exists(exepath))
-                    return false;
-
-                return true;
-            }
-        }
-
-        private void registerDplayApp_Click(object sender, EventArgs e)
-        {
-            string jkPath = @"C:\Users\Strike\Desktop\JK";
-
-            Registry.SetValue(RegistryFinalRoot, "Guid", "{BF0613C0-DE79-11D0-99C9-00A02476AD4B}");
-            Registry.SetValue(RegistryFinalRoot, "File", "JK.EXE");
-            Registry.SetValue(RegistryFinalRoot, "CommandLine", "-windowgui");
-            Registry.SetValue(RegistryFinalRoot, "Path", jkPath);
-            Registry.SetValue(RegistryFinalRoot, "CurrentDirectory", jkPath);
-        }
-
-        private void UNregisterDplayApp_Click(object sender, EventArgs e)
-        {
-            RegistryKey jkKey = Registry.LocalMachine.OpenSubKey(Registry_DPlayApps, true);
-            if (jkKey == null)
-                return;
-            try
-            {
-                jkKey.DeleteSubKeyTree(Registry_AppName);
-            }
-            catch
-            {
-
-            }
-
-        }
-
-        private void enableDPlayButton_Click(object sender, EventArgs e)
-        {
-            Process.Start("dism.exe", "/Online /enable-feature /FeatureName:\"LegacyComponents\" /NoRestart").WaitForExit();
-            Process.Start("dism.exe", "/Online /enable-feature /FeatureName:\"DirectPlay\" /NoRestart").WaitForExit();
-        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            AppRegistry.RegisterGUID();// who cares; we'll just do it every time we launch..  the rest of the values are manipulated elsewhere
+
 #if !DEBUG
             devtools.Visible = false;
 #endif
 
             sessionDetailsLabel.Text = string.Empty;
+
+
+
+            if(!AppRegistry.IsJKRegistered)
+            {
+                optionsButton_Click(null, new EventArgs());
+            }
+
+            processTimer_Tick(null, new EventArgs());
+        }
+
+        private void optionsButton_Click(object sender, EventArgs e)
+        {
+            Options opt = new Options();
+
+            opt.ShowDialog(this);
         }
     }
 }
