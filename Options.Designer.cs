@@ -41,6 +41,8 @@
             this.jkpathGood = new System.Windows.Forms.PictureBox();
             this.enableDplayDISM = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.showIp = new System.Windows.Forms.ComboBox();
             this.jkGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.jkpathGood)).BeginInit();
             this.SuspendLayout();
@@ -61,7 +63,7 @@
             this.jkGroup.Controls.Add(this.label1);
             this.jkGroup.Location = new System.Drawing.Point(12, 12);
             this.jkGroup.Name = "jkGroup";
-            this.jkGroup.Size = new System.Drawing.Size(525, 213);
+            this.jkGroup.Size = new System.Drawing.Size(480, 213);
             this.jkGroup.TabIndex = 0;
             this.jkGroup.TabStop = false;
             this.jkGroup.Text = "Jedi Knight";
@@ -81,14 +83,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.jkExePath.Location = new System.Drawing.Point(35, 44);
             this.jkExePath.Name = "jkExePath";
-            this.jkExePath.Size = new System.Drawing.Size(413, 20);
+            this.jkExePath.Size = new System.Drawing.Size(368, 20);
             this.jkExePath.TabIndex = 1;
             this.jkExePath.TextChanged += new System.EventHandler(this.jkExePath_TextChanged);
             // 
             // jkExeBrowse
             // 
             this.jkExeBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.jkExeBrowse.Location = new System.Drawing.Point(454, 44);
+            this.jkExeBrowse.Location = new System.Drawing.Point(409, 44);
             this.jkExeBrowse.Name = "jkExeBrowse";
             this.jkExeBrowse.Size = new System.Drawing.Size(65, 20);
             this.jkExeBrowse.TabIndex = 2;
@@ -166,7 +168,8 @@
             // 
             // enableDplayDISM
             // 
-            this.enableDplayDISM.Location = new System.Drawing.Point(12, 288);
+            this.enableDplayDISM.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.enableDplayDISM.Location = new System.Drawing.Point(12, 424);
             this.enableDplayDISM.Name = "enableDplayDISM";
             this.enableDplayDISM.Size = new System.Drawing.Size(177, 23);
             this.enableDplayDISM.TabIndex = 1;
@@ -177,18 +180,43 @@
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(9, 240);
+            this.label3.Location = new System.Drawing.Point(9, 376);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(265, 45);
             this.label3.TabIndex = 2;
             this.label3.Text = "If you are experiencing DirectPlay problems, even after adding \"Legacy Components" +
     "->DirectPlay\" in \"Turn on Windows features\", try clicking this:";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 273);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(152, 13);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Show me my IP Address using:";
+            // 
+            // showIp
+            // 
+            this.showIp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.showIp.FormattingEnabled = true;
+            this.showIp.Items.AddRange(new object[] {
+            "-OFF-",
+            "ipinfo.io/ip",
+            "bot.whatismyipaddress.com",
+            "icanhazip.com"});
+            this.showIp.Location = new System.Drawing.Point(12, 289);
+            this.showIp.Name = "showIp";
+            this.showIp.Size = new System.Drawing.Size(165, 21);
+            this.showIp.TabIndex = 4;
+            // 
             // Options
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(549, 459);
+            this.ClientSize = new System.Drawing.Size(504, 459);
+            this.Controls.Add(this.showIp);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.enableDplayDISM);
             this.Controls.Add(this.jkGroup);
@@ -202,6 +230,7 @@
             this.jkGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.jkpathGood)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -220,5 +249,7 @@
         private System.Windows.Forms.PictureBox jkpathGood;
         private System.Windows.Forms.Button enableDplayDISM;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox showIp;
     }
 }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Principal;
+using System.IO;
+using System.Reflection;
 
 namespace Bone
 {
@@ -16,6 +18,24 @@ namespace Bone
                 return (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator);
             }
         }
+
+        public static string ExecutableDirectory
+        {
+            get
+            {
+                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            }
+        }
+
+        public static string INIPath
+        {
+            get
+            {
+                return Path.Combine(ExecutableDirectory, "Bone.ini");
+            }
+        }
+        public static bool HadNoConfigINI = false;
+        public static Smith.INIFile ConfigINI = null;
 
         /// <summary>
         /// The main entry point for the application.
@@ -47,7 +67,13 @@ namespace Bone
                 }
             }
 
+
+            HadNoConfigINI = !System.IO.File.Exists(INIPath);
+            ConfigINI = new Smith.INIFile(INIPath);
+
             Application.Run(new Form1());
+
+            ConfigINI.Dispose();
         }
     }
 }

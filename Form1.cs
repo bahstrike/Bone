@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Net;
 
 namespace Bone
 {
@@ -134,20 +135,71 @@ namespace Bone
         {
             AppRegistry.RegisterGUID();// who cares; we'll just do it every time we launch..  the rest of the values are manipulated elsewhere
 
-#if !DEBUG
-            devtools.Visible = false;
+#if DEBUG
+            remoteAddress.Text = "192.168.5.3";
 #endif
 
             sessionDetailsLabel.Text = string.Empty;
 
 
 
-            if(!AppRegistry.IsJKRegistered)
+            if(!AppRegistry.IsJKRegistered || Program.HadNoConfigINI)
             {
                 optionsButton_Click(null, new EventArgs());
             }
 
             processTimer_Tick(null, new EventArgs());
+
+
+
+            UpdateLocalIPAddress();
+        }
+
+        public void UpdateLocalIPAddress()
+        {
+            Options.DetermineIPMethod ipmethod;
+            if (!Enum.TryParse<Options.DetermineIPMethod>(Program.ConfigINI.GetKey("Bone", "DetermineIPMethod", "off"), true, out ipmethod))
+                ipmethod = Options.DetermineIPMethod.OFF;
+
+            string queryhost = null;
+            switch(ipmethod)
+            {
+                case Options.DetermineIPMethod.ipinfo:
+                    queryhost = "http://ipinfo.io/ip";
+                    break;
+
+                case Options.DetermineIPMethod.whatismyipaddress:
+                    queryhost = "http://bot.whatismyipaddress.com";
+                    break;
+
+                case Options.DetermineIPMethod.icanhazip:
+                    queryhost = "http://icanhazip.com";
+                    break;
+            }
+
+            if(string.IsNullOrEmpty(queryhost))
+            {
+                localAddress.Text = "-disabled-";
+                localAddress.Enabled = false;
+                return;
+            }
+
+            try
+            {
+                string ipaddress = new WebClient().DownloadString(queryhost).Replace("\\r\\n", "").Replace("\\n", "").Trim();
+
+                IPAddress dummy;
+                if (!IPAddress.TryParse(ipaddress, out dummy))
+                    throw new Exception();//cheap shortcut to "failed" scenario
+
+                localAddress.Text = ipaddress;
+                localAddress.Enabled = true;
+            }
+            catch
+            {
+                localAddress.Text = "-failed-";
+                localAddress.Enabled = false;
+            }
         }
 
         private void optionsButton_Click(object sender, EventArgs e)
@@ -155,6 +207,40 @@ namespace Bone
             Options opt = new Options();
 
             opt.ShowDialog(this);
+
+            // re-query after changing options
+            UpdateLocalIPAddress();
+        }
+
+        private void localAddress_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(localAddress.Text);
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void localAddress_Click_1(object sender, EventArgs e)
+        {
+            localAddress.SelectAll();
+        }
+
+        private void localAddress_DoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(localAddress.Text);
+
+                localAddress.DeselectAll();
+            }
+            catch
+            {
+
+            }
         }
     }
 }

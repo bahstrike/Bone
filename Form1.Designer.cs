@@ -37,12 +37,16 @@
             this.sessionDetailsLabel = new System.Windows.Forms.Label();
             this.remotePassword = new System.Windows.Forms.TextBox();
             this.optionsButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.localAddress = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // hostButton
             // 
             this.hostButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.hostButton.Location = new System.Drawing.Point(12, 103);
+            this.hostButton.Location = new System.Drawing.Point(12, 56);
             this.hostButton.Name = "hostButton";
             this.hostButton.Size = new System.Drawing.Size(91, 41);
             this.hostButton.TabIndex = 0;
@@ -53,7 +57,7 @@
             // joinButton
             // 
             this.joinButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.joinButton.Location = new System.Drawing.Point(168, 103);
+            this.joinButton.Location = new System.Drawing.Point(168, 56);
             this.joinButton.Name = "joinButton";
             this.joinButton.Size = new System.Drawing.Size(91, 41);
             this.joinButton.TabIndex = 1;
@@ -64,7 +68,7 @@
             // queryButton
             // 
             this.queryButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.queryButton.Location = new System.Drawing.Point(168, 56);
+            this.queryButton.Location = new System.Drawing.Point(168, 103);
             this.queryButton.Name = "queryButton";
             this.queryButton.Size = new System.Drawing.Size(91, 41);
             this.queryButton.TabIndex = 2;
@@ -79,7 +83,6 @@
             this.remoteAddress.Name = "remoteAddress";
             this.remoteAddress.Size = new System.Drawing.Size(131, 26);
             this.remoteAddress.TabIndex = 3;
-            this.remoteAddress.Text = "192.168.5.3";
             // 
             // processTimer
             // 
@@ -107,7 +110,7 @@
             // optionsButton
             // 
             this.optionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.optionsButton.Location = new System.Drawing.Point(15, 17);
+            this.optionsButton.Location = new System.Drawing.Point(491, 12);
             this.optionsButton.Name = "optionsButton";
             this.optionsButton.Size = new System.Drawing.Size(91, 41);
             this.optionsButton.TabIndex = 13;
@@ -115,11 +118,53 @@
             this.optionsButton.UseVisualStyleBackColor = true;
             this.optionsButton.Click += new System.EventHandler(this.optionsButton_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(165, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(98, 13);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Remote IP Address";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(302, 8);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(53, 13);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "Password";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(9, 8);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(78, 13);
+            this.label3.TabIndex = 17;
+            this.label3.Text = "My IP Address:";
+            // 
+            // localAddress
+            // 
+            this.localAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.localAddress.Location = new System.Drawing.Point(12, 24);
+            this.localAddress.Name = "localAddress";
+            this.localAddress.ReadOnly = true;
+            this.localAddress.Size = new System.Drawing.Size(131, 26);
+            this.localAddress.TabIndex = 18;
+            this.localAddress.Click += new System.EventHandler(this.localAddress_Click_1);
+            this.localAddress.DoubleClick += new System.EventHandler(this.localAddress_DoubleClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(594, 289);
+            this.Controls.Add(this.localAddress);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.optionsButton);
             this.Controls.Add(this.remotePassword);
             this.Controls.Add(this.sessionDetailsLabel);
@@ -147,6 +192,10 @@
         private System.Windows.Forms.Label sessionDetailsLabel;
         private System.Windows.Forms.TextBox remotePassword;
         private System.Windows.Forms.Button optionsButton;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox localAddress;
     }
 }
 

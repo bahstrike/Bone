@@ -14,6 +14,15 @@ namespace Bone
 {
     public partial class Options : Form
     {
+        public enum DetermineIPMethod
+        {
+            OFF,
+            ipinfo,
+            whatismyipaddress,
+            icanhazip
+        }
+
+
         public Options()
         {
             InitializeComponent();
@@ -34,6 +43,12 @@ namespace Bone
             argNoHud.Checked = (cmd & AppRegistry.CmdLine.nohud) != 0;
 
 
+
+            DetermineIPMethod ipmethod;
+            if (!Enum.TryParse<DetermineIPMethod>(Program.ConfigINI.GetKey("Bone", "DetermineIPMethod", "ipinfo"), true, out ipmethod))
+                ipmethod = DetermineIPMethod.OFF;
+
+            showIp.SelectedIndex = (int)ipmethod;
         }
 
         private void jkExeBrowse_Click(object sender, EventArgs e)
@@ -77,6 +92,13 @@ namespace Bone
             if (argNoHud.Checked)
                 cmd |= AppRegistry.CmdLine.nohud;
             AppRegistry.CommandLine = cmd;
+
+
+
+
+
+            DetermineIPMethod ipmethod = (DetermineIPMethod)showIp.SelectedIndex;
+            Program.ConfigINI.WriteKey("Bone", "DetermineIPMethod", ipmethod.ToString());
         }
 
         private void enableDplayDISM_Click(object sender, EventArgs e)
