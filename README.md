@@ -2,12 +2,10 @@
 directplay lobby project for jedi knight dark forces 2
 
 ## usage
-_EXE download of version 0.000001 alpha is not available yet_
 
-~~just download and run Bone.exe **as administrator** _(this is required for DirectPlay to launch JK)_~~
+just download and run Bone.exe **as administrator** _(this is required for DirectPlay to launch JK)_
 
-#### Run as Administrator
-DirectPlay is old and fails to spawn JK.EXE unless its launcher is run as Administrator
+**STATUS: this project is broken cuz of progressive deprecations of old MS APIs.. it works for like 2 PCs on the planet and seemingly nobody else.  we'll try to find a solution, but it is not known at the moment.**  still works to query JK game details at a target IP address;  but probably wont launch JK.EXE for you via DirectPlay, thus automatically into a network session :(
 
 ---
 
@@ -19,15 +17,15 @@ DirectPlay is old and fails to spawn JK.EXE unless its launcher is run as Admini
 ### planned features
 - automatic host->client transfer of map/patch
 - patchcommander-like UI for mixing&matching patches
-- global games list (probably hosted from bah.wtf)
+- global games list
 
 ---
 
 ## development
 
 ### modules
-- Bone.exe _(Bone: this is the application itself)_
-- BoneRPlay.dll _(Bone RescindedPlay: this module interfaces with DirectPlay)_
+- Bone.exe _(**Bone** (Bone): this is the application itself)_
+- BoneRPlay.dll _(**Bone RescindedPlay** (BoneRPlay): this module interfaces with DirectPlay)_
 
 ### building
 - change/setup ur inc/lib paths for a sufficiently-old directx _(locally compiled with dx5.2sdk; not included.. source it urself)_
